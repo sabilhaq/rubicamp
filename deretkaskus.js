@@ -1,6 +1,6 @@
 function deretKaskus(n){
   const arr = [];
-  if (n > 1) { 
+  if (n > 0) { 
     for (let i = 1, number = 3; i <= n; i++, number = number + 3) {
       if (number % 5 == 0 && number % 6 == 0) {
         arr.push("KASKUS");
@@ -16,4 +16,5 @@ function deretKaskus(n){
   return arr;
 }
 
-console.log(deretKaskus(10));
+console.log(deretKaskus(1));
+alert(deretKaskus(1));
