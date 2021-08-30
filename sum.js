@@ -1,6 +1,8 @@
-function sum(...args){
+function sum(){
   let sum = 0;
-  args.forEach(arg => sum += arg);
+  for (const index in arguments) {
+    sum += arguments[index]
+  }
   console.log(sum);
   return sum;
 }
