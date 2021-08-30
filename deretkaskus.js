@@ -16,5 +16,4 @@ function deretKaskus(n){
   return arr;
 }
 
-console.log(deretKaskus(1));
-alert(deretKaskus(1));
+console.log(deretKaskus(10));
