@@ -1,25 +1,25 @@
 function sentencesManipulation(sentence) {
-  let arr = sentence.split(" ");
-  for (let i = 0; i < arr.length; i++) {
-    let word = arr[i];
+  let words = sentence.split(" ");
+  for (let i = 0; i < words.length; i++) {
+    let word = words[i];
     switch (word.charAt(0)) {
       case "a":
       case "i":
       case "u":
       case "e":
       case "o":
-        arr[i] = word;
+        words[i] = word;
         break;
       default:
         let letters = word.split("");
         let firstLetter = letters.shift();
         letters.push(firstLetter + "nyo");
         word = letters.join("");
-        arr[i] = word;
+        words[i] = word;
         break;
     }
   }
-  console.log(arr.join(" "));
+  console.log(words.join(" "));
 }
 
 sentencesManipulation("ibu pergi ke pasar bersama aku");
