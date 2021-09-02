@@ -16,7 +16,17 @@ console.log(
 console.log(`Pertanyaan: ${questions[i].definition}`);
 rl.prompt();
 rl.on("line", (line) => {
-  if (line.trim() == questions[i].term) {
+  let capitalFirst = questions[i].term[0].toUpperCase();
+  let capitalAnswer = questions[i].term.replace(
+    questions[i].term[0],
+    capitalFirst
+  );
+  if (
+    line.trim() == questions[i].term ||
+    line.trim() == questions[i].term.toUpperCase() ||
+    line.trim() == questions[i].term.toLowerCase ||
+    line.trim() == capitalAnswer
+  ) {
     console.log("Selamat Anda Benar!\n");
     i++;
     if (i < questions.length) {
