@@ -69,10 +69,11 @@ function getListFilteredSorted(filter, sort) {
 
     switch (filter) {
       case "outstanding":
-        filteredTodos = todos.filter((task) => {
-          return task.checked == false;
-        });
-
+        for (let i = 0; i < todos.length; i++) {
+          if (!todos[i].checked) {
+            console.log(`${i + 1}. [ ] ${todos[i].text}.`);
+          }
+        }
         break;
       case "completed":
         filteredTodos = todos.filter((task) => {
