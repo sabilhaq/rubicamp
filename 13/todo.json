@@ -1,0 +1,17 @@
+[
+  {
+    "text": "saya akan memasak",
+    "checked": true,
+    "createdAt": 1630585074241,
+    "tags": [
+      "masak",
+      "sayur"
+    ]
+  },
+  {
+    "text": "saya pergi ke sekolah",
+    "checked": false,
+    "createdAt": 1630585191831,
+    "tags": []
+  }
+]
