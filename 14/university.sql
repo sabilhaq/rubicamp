@@ -38,6 +38,7 @@ CREATE TABLE dosen_matakuliah(
 CREATE TABLE mahasiswa_matakuliah(
   nim TEXT, 
   id_matakuliah INTEGER, 
+  nilai INTEGER, 
   FOREIGN KEY(nim) REFERENCES mahasiswa(nim), 
   FOREIGN KEY(id_matakuliah) REFERENCES matakuliah(id), 
   PRIMARY KEY (nim, id_matakuliah)
