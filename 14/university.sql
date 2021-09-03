@@ -9,7 +9,9 @@ CREATE TABLE mahasiswa(
   nama TEXT, 
   alamat TEXT, 
   jurusan TEXT, 
+  dosen_wali INTEGER, 
   FOREIGN KEY(jurusan) REFERENCES jurusan(id)
+  FOREIGN KEY(dosen_wali) REFERENCES dosen(id)
 );
 
 CREATE TABLE dosen(
@@ -24,14 +26,6 @@ CREATE TABLE matakuliah(
   id_jurusan INTEGER, 
   FOREIGN KEY(id_jurusan) REFERENCES jurusan(id)
 ); 
-
-CREATE TABLE dosen_mahasiswa(
-  id_dosen INTEGER, 
-  nim TEXT, 
-  FOREIGN KEY(id_dosen) REFERENCES dosen(id), 
-  FOREIGN KEY(nim) REFERENCES mahasiswa(nim), 
-  PRIMARY KEY (id_dosen, nim)
-);
 
 CREATE TABLE dosen_matakuliah(
   id_dosen INTEGER, 
@@ -52,13 +46,11 @@ CREATE TABLE mahasiswa_matakuliah(
 /* INSERT data into tables */
 INSERT INTO jurusan VALUES(1, "Sisten dan Teknologi Informasi");
 
-INSERT INTO mahasiswa VALUES("18216031", "Makrifat Sabil Haq", "Komplek Pratista II Blok F-87", 1);
+INSERT INTO mahasiswa VALUES("18216031", "Makrifat Sabil Haq", "Komplek Pratista II Blok F-87", 1, 1);
 
 INSERT INTO dosen VALUES(1, "Kridanto Surendro");
 
 INSERT INTO matakuliah VALUES(1, "Arsitektur Enterprise", 4, 1); 
-
-INSERT INTO dosen_mahasiswa VALUES(1, "18216031");
 
 INSERT INTO dosen_matakuliah VALUES(1, 1);
 
