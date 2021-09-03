@@ -13,9 +13,9 @@ CREATE TABLE mahasiswa(
   nim TEXT PRIMARY KEY, 
   nama TEXT, 
   alamat TEXT, 
-  jurusan TEXT, 
+  id_jurusan TEXT, 
   id_dosen_wali INTEGER, 
-  FOREIGN KEY(jurusan) REFERENCES jurusan(id_jurusan)
+  FOREIGN KEY(id_jurusan) REFERENCES jurusan(id_jurusan)
   FOREIGN KEY(id_dosen_wali) REFERENCES dosen(id_dosen)
 );
 
@@ -29,9 +29,9 @@ CREATE TABLE matakuliah(
 
 CREATE TABLE nilai_mahasiswa(
   id_nilai_mahasiswa INTEGER PRIMARY KEY, 
+  nilai INTEGER, 
   nim TEXT, 
   id_mk INTEGER, 
-  nilai INTEGER, 
   id_dosen INTEGER, 
   FOREIGN KEY(nim) REFERENCES mahasiswa(nim), 
   FOREIGN KEY(id_mk) REFERENCES matakuliah(id_mk), 
