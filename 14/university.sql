@@ -45,7 +45,7 @@ CREATE TABLE mahasiswa_matakuliah(
 );
 
 /* INSERT data into tables */
-INSERT INTO jurusan VALUES(1, "Sisten dan Teknologi Informasi");
+INSERT INTO jurusan VALUES(1, "Sistem dan Teknologi Informasi");
 
 INSERT INTO mahasiswa VALUES("18216031", "Makrifat Sabil Haq", "Komplek Pratista II Blok F-87", 1, 1);
 
