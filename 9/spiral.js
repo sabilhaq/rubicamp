@@ -13,26 +13,18 @@ function spiral(param1) {
   for (let i = 0, param = param1; i < param; i++, param--) {
     // right direction
     for (let j = i; j < param - 1; j++) {
-      if (arr[i][j] == 9) {
-      }
       resArr.push(arr[i][j]);
     }
     // downward direction
     for (let j = i; j < param - 1; j++) {
-      if (arr[j][param - 1] == 9) {
-      }
       resArr.push(arr[j][param - 1]);
     }
     // left direction
     for (let j = param - 1; j > i; j--) {
-      if (arr[param - 1][j] == 9) {
-      }
       resArr.push(arr[param - 1][j]);
     }
     // upward direction
     for (let j = param - 1; j > i; j--) {
-      if (arr[j][i] == 9) {
-      }
       resArr.push(arr[j][i]);
     }
   }
