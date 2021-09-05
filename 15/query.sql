@@ -1,13 +1,18 @@
 /* 1. tampilkan seluruh data mahasiswa beserta nama jurusannya. */
+
 SELECT * FROM mahasiswa LEFT JOIN jurusan USING(id_jurusan);
 
 /* 2. tampilkan mahasiswa yang memiliki umur di bawah 20 tahun. */
+
+ALTER TABLE mahasiswa ADD birth_date DATE;
 SELECT * FROM mahasiswa WHERE ((strftime('%Y', 'now') - strftime('%Y', birth_date)) - (strftime('%m-%d', 'now') < strftime('%m-%d', birth_date)) < 20);
 
 /* 3. tampilkan mahasiswa yang memiliki nilai 'B' ke atas. */
+
 SELECT nim, nama, nilai FROM mahasiswa LEFT JOIN nilai_mahasiswa USING(nim) WHERE nilai <= "B";
 
 /* 4. tampilkan mahasiswa yang memiliki jumlah SKS lebih dari 10. */
+
 SELECT 
   mahasiswa.nim, mahasiswa.nama, SUM(sks) 
 FROM 
@@ -21,6 +26,7 @@ HAVING SUM(sks) > 10
 ;
 
 /* 5. tampilkan mahasiswa yang mengontrak mata kuliah 'data mining'. */
+
 SELECT 
   mahasiswa.nim, mahasiswa.nama, matakuliah.id_mk, matakuliah.nama 
 FROM 
@@ -33,16 +39,20 @@ WHERE matakuliah.nama = 'data mining'
 ;
 
 /* 6. tampilkan jumlah mahasiswa untuk setiap dosen. */
+
 SELECT 
-  dosen.nama, COUNT(mahasiswa.nim) 
+  dosen.nama, COUNT (DISTINCT mahasiswa.nim) 
 FROM 
-  dosen 
-  LEFT JOIN 
-    mahasiswa ON mahasiswa.id_dosen_wali = dosen.id_dosen 
-GROUP BY dosen.nama
+  nilai_mahasiswa
+LEFT JOIN 
+  dosen ON nilai_mahasiswa.id_dosen = dosen.id_dosen 
+LEFT JOIN 
+  mahasiswa ON mahasiswa.nim = nilai_mahasiswa.nim 
+GROUP BY dosen.id_dosen
 ;
 
 /* 7. urutkan mahasiswa berdasarkan umurnya. */
+
 SELECT 
   * 
 FROM 
