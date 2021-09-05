@@ -18,7 +18,7 @@ if (argv[2] === undefined) {
   let countWrong = 0;
 
   console.log(
-    "Selamat datang di permainan Tebak-tebakan. kamu akan diberikan pertanyaan dari flie ini 'data.json'."
+    `Selamat datang di permainan Tebak-tebakan. kamu akan diberikan pertanyaan dari file ini '${argv[2]}'.`
   );
   console.log("Untuk bermain, jawablah dengan jawaban yang sesuai.");
   console.log(
