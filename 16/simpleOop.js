@@ -38,6 +38,20 @@ class CarFactory {
     this.totalCar++;
     this.cars.push(car);
   }
+  checkWarranty(yearAddition) {
+    let countExpired = 0;
+    let dateNow = new Date();
+    let yearNow = dateNow.getFullYear();
+    let predictionYear = yearNow + yearAddition;
+
+    for (let i = 0; i < factory.cars.length; i++) {
+      if (factory.cars[i].age(predictionYear) >= factory.cars[i].warranty) {
+        console.log(`Masa garansi mobil ${factory.cars[i].name} telah habis.`);
+        countExpired++;
+      }
+    }
+    return countExpired;
+  }
 }
 
 // Instance
@@ -49,20 +63,5 @@ factory.productionPerMonth();
 
 // Increase cars age simulation
 
-function checkWarranty(yearAddition) {
-  let countExpired = 0;
-  let dateNow = new Date();
-  let yearNow = dateNow.getFullYear();
-  let predictionYear = yearNow + yearAddition;
-
-  for (let i = 0; i < factory.cars.length; i++) {
-    if (factory.cars[i].age(predictionYear) >= factory.cars[i].warranty) {
-      console.log(`Masa garansi mobil ${factory.cars[i].name} telah habis.`);
-      countExpired++;
-    }
-  }
-  return countExpired;
-}
-
 let yearAddition = Math.floor(Math.random() * 10 + 1);
-console.log("Total mobil:", checkWarranty(yearAddition));
+console.log("Total mobil:", factory.checkWarranty(yearAddition));
