@@ -44,9 +44,9 @@ class CarFactory {
     let yearNow = dateNow.getFullYear();
     let predictionYear = yearNow + yearAddition;
 
-    for (let i = 0; i < factory.cars.length; i++) {
-      if (factory.cars[i].age(predictionYear) >= factory.cars[i].warranty) {
-        console.log(`Masa garansi mobil ${factory.cars[i].name} telah habis.`);
+    for (let i = 0; i < this.cars.length; i++) {
+      if (this.cars[i].age(predictionYear) >= this.cars[i].warranty) {
+        console.log(`Masa garansi mobil ${this.cars[i].name} telah habis.`);
         countExpired++;
       }
     }
@@ -56,12 +56,13 @@ class CarFactory {
 
 // Instance
 
-let factory = new CarFactory();
-factory.produceCar("Honda", 2014, 2, "Black", 4, 4, 4);
-factory.produceCar("Toyota", 2020, 3, "Red", 4, 3, 4);
-factory.productionPerMonth();
+let toyota = new CarFactory();
+toyota.produceCar("Kijang Innova", 2014, 2, "Black", 4, 4, 4);
+toyota.produceCar("Avanza", 2020, 3, "Red", 4, 3, 4);
+toyota.produceCar("Yaris", 2010, 6, "White", 4, 3, 4);
+toyota.productionPerMonth();
 
 // Increase cars age simulation
 
 let yearAddition = Math.floor(Math.random() * 10 + 1);
-console.log("Total mobil:", factory.checkWarranty(yearAddition));
+console.log("Total mobil:", toyota.checkWarranty(yearAddition));
