@@ -1,4 +1,3 @@
-// import "./mesin-hitung.js";
 import { MesinHitung } from "./mesin-hitung.js";
 
 var mh = new MesinHitung();
