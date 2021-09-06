@@ -36,4 +36,5 @@ class MesinHitung {
   }
 }
 
-export { MesinHitung };
+export default MesinHitung;
+export const Pi = Math.PI;
