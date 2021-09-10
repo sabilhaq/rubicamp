@@ -1,0 +1,48 @@
+body {
+  padding: 0px 20px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+select {
+  background-color: white;
+  cursor: pointer;
+}
+
+.container {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.container .container__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.container .container__row .container__row__input {
+  width: 85%;
+}
+
+.container .container__row .container__row__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #008cba;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}

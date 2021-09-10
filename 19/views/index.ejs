@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>BREAD (Browse, Read, Edit, Add, Delete)</h1>
+    <section class="container__filter">
+
+      <form action="" method="post">
+        <div class="container__row">
+          <div class="container__row__check">
+            <input onclick="enableInput(this)" type="checkbox" name="string" id="string">
+          </div>
+          <div class="container__row__label">
+            <label for="string">String</label>
+          </div>
+          <div class="container__row__input">
+            <input disabled id="stringinput" type="text" name="string" value="<%= filterObj ? filterObj.string : "" %>" placeholder="String">
+          </div>
+        </div>
+        <div class="container__row">
+          <div class="container__row__check">
+            <input onclick="enableInput(this)" type="checkbox" name="integer" id="integer">
+          </div>
+          <div class="container__row__label">
+            <label for="integer">Integer</label>
+          </div>
+          <div class="container__row__input">
+            <input disabled id="integerinput" type="number" name="integer" placeholder="Integer">
+          </div>
+        </div>
+        <div class="container__row">
+          <div class="container__row__check">
+            <input onclick="enableInput(this)" type="checkbox" name="float" id="float">
+          </div>
+          <div class="container__row__label">
+            <label for="float">Float</label>
+          </div>
+          <div class="container__row__input">
+            <input disabled id="floatinput" type="number" step="any" name="float" placeholder="Float">
+          </div>
+        </div>
+        <div style="margin: 0px;" class="container__row">
+          <div class="container__row__check">
+            <input onclick="enableInput(this)" type="checkbox" name="date" id="date">
+          </div>
+          <div class="container__row__label">
+            <label for="startdate">Date</label>
+          </div>
+          <div class="container__row__input">
+            <input disabled id="startdateinput" type="date" name="startdate" placeholder="start date">
+          </div>
+        </div>
+        <div class="container__row">
+          <div class="container__row__check">
+            <div style="width: 20px;"></div>
+          </div>
+          <div class="container__row__label">
+            <label for="date"></label>
+          </div>
+          <div class="container__row__input">
+            <div>to</div>
+            <input disabled id="enddateinput" type="date" name="enddate" placeholder="end date">
+          </div>
+        </div>
+        <div class="container__row">
+          <div class="container__row__check">
+            <input onclick="enableInput(this)" type="checkbox" name="boolean" id="boolean">
+          </div>
+          <div class="container__row__label">
+            <label for="boolean">Boolean</label>
+          </div>
+          <div class="container__row__input">
+            <select disabled id="booleaninput" name="boolean" id="boolean">
+              <option value="" disabled selected hidden>Choose the boolean ...</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+        </div>
+        <div class="container__row">
+          <button type="submit" class="container__row__button button">Search</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="container__table">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>String</th>
+            <th>Integer</th>
+            <th>Float</th>
+            <th>Date</th>
+            <th>Boolean</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% Object.keys(filterObj).length == 0 ? data = pagination.data : data = pagination.data %>
+          <% data.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %> </td>
+            <td><%= item.string %> </td>
+            <td><%= item.integer %> </td>
+            <td><%= item.float %> </td>
+            <td><%= item.date ? helper.viewDate(item.date) : "kosong" %> </td>
+            <td><%= item.boolean %> </td>
+            <td>
+              <a href="/edit/<%= index %>">
+                <button class="button edit">Edit</button>
+              </a>
+              <a href="/delete/<%= index %>">
+                <button class="button delete">Delete</button>
+              </a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <a href="/?page=<%= pagination.previousPage %>" style=<%= pagination.page == 1 || !pagination.page ? "pointer-events:none;" : "" %>>Previous</a>
+        <a href="/">1</a>
+        <a href="/?page=2">2</a>
+        <a href="/?page=3">3</a>
+        <a href="/?page=<%= pagination.nextPage %>" style=<%= pagination.page == 3 ? "pointer-events:none;" : "" %>>Next</a>
+      </div>
+
+      <a href="/add">
+        <button class="button add">Add</button>
+      </a>
+
+    </section>
+  </div>
+
+  <script>
+    function enableInput(checkbox) {
+      console.log("checkbox:", checkbox);
+      console.log("checkbox.id:", checkbox.id);
+      let id = checkbox.id + "input"
+
+      if (id == "dateinput") {
+        var inputStart = document.getElementById("startdateinput");
+        var inputEnd = document.getElementById("enddateinput");
+        if (checkbox.checked) {
+          inputStart.disabled = false;
+          inputEnd.disabled = false;
+        } else {
+          inputStart.disabled = true;
+          inputEnd.disabled = true;
+        }
+      } else {
+        var inputText = document.getElementById(id);
+        if (checkbox.checked) {
+          inputText.disabled = false;
+        } else {
+          inputText.disabled = true;
+        }
+
+      }
+    }
+  </script>
+</body>
+
+</html>

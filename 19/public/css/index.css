@@ -1,0 +1,148 @@
+a {
+  text-decoration: none;
+}
+
+select {
+  background-color: white;
+  cursor: pointer;
+}
+
+.container .container__row .container__row__button {
+  background-color: red;
+  /* background-color: #00506b; */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.container {
+  padding: 50px 100px;
+}
+
+/* Filter */
+.container .container__row {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  /* justify-content: space-between; */
+  margin-bottom: 20px;
+}
+
+.container .container__row .container__row__label {
+  /* width: 85%; */
+  text-align: left;
+  flex-basis: 15%;
+}
+
+.container .container__row .container__row__input {
+  width: 85%;
+  justify-self: end;
+}
+
+.container .container__row .container__row__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #008cba;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.table th {
+  font-weight: bold;
+  background-color: #fff;
+}
+
+.table th,
+td {
+  border-top: 1px solid #ddd;
+  text-align: left;
+  padding: 12px;
+}
+
+.table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.table tr:hover {
+  background-color: #ddd;
+}
+
+.button {
+  border-radius: 4px;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.button.edit {
+  background-color: #4caf50;
+}
+
+.button.delete {
+  background-color: #f44336;
+}
+
+.button.add,
+.button.search {
+  background-color: #008cba;
+  margin: 20px 0px;
+}
+
+.pagination {
+  padding: 8px 0px;
+  height: 32px;
+}
+
+.pagination a {
+  float: left; /* Float the buttons side by side */
+
+  color: #008cba;
+  /* color: dodgerblue; */
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color 0.1s;
+  border: 1px solid #ddd;
+}
+
+.pagination a:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.pagination a:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.pagination a.active {
+  background-color: #008cba;
+  /* background-color: dodgerblue; */
+  color: white;
+}
+
+.pagination a:hover:not(.active) {
+  /* background-color: #ddd; */
+  background-color: #008cba;
+  /* background-color: dodgerblue; */
+  color: white;
+}
