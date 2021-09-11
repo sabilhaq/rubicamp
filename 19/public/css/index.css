@@ -13,6 +13,7 @@ select {
 }
 
 input[type="text"],
+input[type="search"],
 input[type="number"],
 input[type="date"],
 select {
@@ -144,5 +145,10 @@ td {
   /* background-color: #ddd; */
   background-color: #008cba;
   /* background-color: dodgerblue; */
+  color: white;
+}
+
+.active {
+  background-color: #008cba;
   color: white;
 }
