@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/css/index.css">
 </head>
 
@@ -102,13 +103,13 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>String</th>
-            <th>Integer</th>
-            <th>Float</th>
-            <th>Date</th>
-            <th>Boolean</th>
-            <th>Actions</th>
+            <th onclick="location.href=`/?sort=id&order=<%= order %>`;">ID <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=string_type&order=<%= order %>`;">String <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=int_type&order=<%= order %>`;">Integer <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=float_type&order=<%= order %>`;">Float <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=date_type&order=<%= order %>`;">Date <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=boolean_type&order=<%= order %>`;">Boolean <i class="fa fa-sort" style="font-size:12px;"></i></th>
+            <th onclick="location.href=`/?sort=actions_type&order=<%= order %>`;">Actions <i class="fa fa-sort" style="font-size:12px;"></i></th>
           </tr>
         </thead>
 

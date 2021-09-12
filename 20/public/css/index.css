@@ -60,6 +60,7 @@ select {
 .table th {
   background-color: #fff;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .table th,

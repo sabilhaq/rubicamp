@@ -74,38 +74,70 @@ app.get("/", (req, res) => {
   }
 
   let sql = `SELECT * FROM data_type`;
+
+  let i = 0;
   if (filters.length > 0) {
     sql += " WHERE";
 
-    if (req.query.string && req.query.stringcheck == "on") {
-      sql += " AND string_type = ?";
-      args.push(req.query.string);
-    }
-    if (req.query.integer && req.query.integercheck == "on") {
-      sql += " AND int_type = ?";
-      args.push(req.query.integer);
-    }
-    if (req.query.float && req.query.floatcheck == "on") {
-      sql += " AND float_type = ?";
-      args.push(req.query.float);
-    }
-    if (req.query.boolean && req.query.booleancheck == "on") {
-      sql += " AND boolean_type = ?";
-      args.push(req.query.boolean == "true" ? true : false);
-    }
-    if (req.query.startdate && req.query.datecheck == "on") {
-      sql += " AND date_type >= ?";
-      args.push(req.query.startdate);
-    }
-    if (req.query.enddate && req.query.datecheck == "on") {
-      sql += " AND date_type <= ?";
-      args.push(req.query.enddate);
+    for (; i < filters.length; i++) {
+      switch (filters[i].name) {
+        case "string":
+          sql += ` AND string_type = ?`;
+          args.push(req.query.string);
+          break;
+
+        case "integer":
+          sql += ` AND int_type = ?`;
+          args.push(req.query.integer);
+          break;
+
+        case "float":
+          sql += ` AND float_type = ?`;
+          args.push(req.query.float);
+          break;
+
+        case "boolean":
+          sql += ` AND boolean_type = ?`;
+          args.push(req.query.boolean);
+          break;
+
+        case "startdate":
+          sql += ` AND date_type >= ?`;
+          args.push(req.query.startdate);
+          break;
+
+        case "enddate":
+          sql += ` AND date_type <= ?`;
+          args.push(req.query.enddate);
+          break;
+
+        default:
+          break;
+      }
     }
 
     sql = sql.replace(" AND", "");
   }
 
-  sql += " ORDER BY id LIMIT 3 OFFSET ?";
+  let order = req.query.order;
+  if (req.query.sort) {
+    switch (req.query.order) {
+      case "asc":
+        sql += ` ORDER BY ${req.query.sort} desc LIMIT 3 OFFSET ?`;
+        order = "desc";
+        break;
+      case "desc":
+        sql += ` ORDER BY id LIMIT 3 OFFSET ?`;
+        order = "";
+        break;
+      default:
+        sql += ` ORDER BY ${req.query.sort} asc LIMIT 3 OFFSET ?`;
+        order = "asc";
+        break;
+    }
+  } else {
+    sql += ` ORDER BY id LIMIT 3 OFFSET ?`;
+  }
 
   helper.countRows(db, sql, args, (err, totalRow) => {
     if (err) {
@@ -127,6 +159,7 @@ app.get("/", (req, res) => {
         helper,
         queryParams,
         filters,
+        order,
       });
     });
   });

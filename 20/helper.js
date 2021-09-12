@@ -1,21 +1,8 @@
-const fs = require("fs");
-
 function viewDate(date) {
   let newDate = new Date(date);
   const options = { year: "numeric", month: "long", day: "numeric" };
   let formatedDate = newDate.toLocaleDateString("id-ID", options);
   return formatedDate;
-}
-
-function readFile() {
-  let file = fs.readFileSync("data.json", "utf-8");
-  var data = JSON.parse(file);
-  return data;
-}
-
-function writeFile(data) {
-  let dataString = JSON.stringify(data);
-  fs.writeFileSync("data.json", dataString);
 }
 
 function page(filters, i, queryParams) {
@@ -34,16 +21,15 @@ function page(filters, i, queryParams) {
 
 function countRows(db, sql, args, next) {
   sql = sql.replace("*", "COUNT(*) as total");
-  sql = sql.replace(" ORDER BY id LIMIT 3 OFFSET ?", "");
+  sql = sql.slice(0, sql.indexOf("ORDER"));
 
   db.all(sql, [...args], (err, rows) => {
     next(err, rows[0].total);
   });
 }
+
 module.exports = {
   viewDate,
-  readFile,
-  writeFile,
   page,
   countRows,
 };
