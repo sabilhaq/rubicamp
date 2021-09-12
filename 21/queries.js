@@ -10,9 +10,6 @@ const pool = new Pool({
 var helper = require("./helper");
 
 const getTypes = (req, res) => {
-  console.log("req.body:", req.body);
-  console.log("req.query:", req.query);
-  console.log("req.url:", req.url);
   let queryParams = "";
   let pagination = {
     totalPage: 3,
