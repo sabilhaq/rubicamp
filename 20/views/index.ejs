@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>BREAD (Browse, Read, Edit, Add, Delete)</h1>
+
+    <section class="filter">
+      <form action="" method="get">
+        <div class="row">
+          <div class="check">
+            <input type="checkbox" name="stringcheck" id="stringcheck">
+          </div>
+          <div class="label">
+            <label for="string">String</label>
+          </div>
+          <div class="input">
+            <input type="search" name="string" id="stringinput" placeholder="String">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="check">
+            <input type="checkbox" name="integercheck" id="integercheck">
+          </div>
+          <div class="label">
+            <label for="integer">Integer</label>
+          </div>
+          <div class="input">
+            <input type="number" name="integer" id="integerinput" placeholder="Integer">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="check">
+            <input type="checkbox" name="floatcheck" id="floatcheck">
+          </div>
+          <div class="label">
+            <label for="float">Float</label>
+          </div>
+          <div class="input">
+            <input type="number" name="float" id="floatinput" placeholder="Float" step="any">
+          </div>
+        </div>
+
+        <div class="row" style="margin: 0px;">
+          <div class="check">
+            <input type="checkbox" name="datecheck" id="datecheck">
+          </div>
+          <div class="label">
+            <label for="date">Date</label>
+          </div>
+          <div class="input">
+            <input type="date" name="startdate" id="startdateinput" placeholder="start date">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="check">
+            <div style="width: 20px;"></div>
+          </div>
+          <div class="label">
+            <label for="date"></label>
+          </div>
+          <div class="input">
+            <div>to</div>
+            <input type="date" name="enddate" id="enddateinput" placeholder="String">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="check">
+            <input type="checkbox" name="booleancheck" id="booleancheck">
+          </div>
+          <div class="label">
+            <label for="boolean">Boolean</label>
+          </div>
+          <div class="input">
+            <select id="booleaninput" name="boolean">
+              <option value="" disabled selected hidden>Choose the boolean ...</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <button type="submit" class="button">Search</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>String</th>
+            <th>Integer</th>
+            <th>Float</th>
+            <th>Date</th>
+            <th>Boolean</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% for( let i = 0; (i < pagination.perPage) && (i < data.length); i++ ) { %>
+
+          <tr>
+            <td><%= data[i].id %> </td>
+            <td><%= data[i].string_type %> </td>
+            <td><%= data[i].int_type %> </td>
+            <td><%= data[i].float_type %> </td>
+            <td><%= data[i].date_type ? helper.viewDate(data[i].date_type) : "kosong" %> </td>
+            <td><%= data[i].boolean_type == 1 ? true : false  %> </td>
+            <td>
+              <a href="/edit/<%= data[i].id %>">
+                <button class="button edit">Edit</button>
+              </a>
+              <a href="/delete/<%= data[i].id %>">
+                <button class="button delete">Delete</button>
+              </a>
+            </td>
+          </tr>
+
+          <% } %>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <a href="<%= helper.page(filters, pagination.currentPage - 1, queryParams) %>" style=<%= pagination.currentPage == 1 || !pagination.currentPage ? "pointer-events:none;" : "" %>>Previous</a>
+        <% for( let i = 1; i < pagination.totalPage+1; i++ ) { %>
+        <a href="<%= helper.page(filters, i, queryParams) %>" class="<%= pagination.currentPage == i ? "active" : "" %> "><%= i %></a>
+        <% } %>
+        <a href="<%= helper.page(filters, pagination.currentPage + 1, queryParams) %>" style=<%= pagination.currentPage == pagination.totalPage ? "pointer-events:none;" : "" %>>Next</a>
+      </div>
+
+      <a href="/add">
+        <button class="button add">Add</button>
+      </a>
+
+    </section>
+  </div>
+</body>
+
+</html>
