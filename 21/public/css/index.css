@@ -1,0 +1,140 @@
+a {
+  text-decoration: none;
+}
+
+select {
+  background-color: white;
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.container {
+  padding: 50px 100px;
+}
+
+.container .row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.container .row .label {
+  text-align: left;
+  flex-basis: 15%;
+}
+
+.container .row .input {
+  width: 85%;
+  justify-self: end;
+}
+
+.container .row .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #008cba;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 16px;
+  border-collapse: collapse;
+}
+
+.table th {
+  background-color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.table th,
+td {
+  border-top: 1px solid #ddd;
+  text-align: left;
+  padding: 12px;
+}
+
+.table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.table tr:hover {
+  background-color: #ddd;
+}
+
+.button {
+  border-radius: 4px;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.button.edit {
+  background-color: #4caf50;
+}
+
+.button.delete {
+  background-color: #f44336;
+}
+
+.button.add,
+.button.search {
+  background-color: #008cba;
+  margin: 20px 0px;
+}
+
+.pagination {
+  padding: 8px 0px;
+  height: 32px;
+}
+
+.pagination a {
+  float: left;
+  color: #008cba;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color 0.1s;
+  border: 1px solid #ddd;
+}
+
+.pagination a:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.pagination a:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.pagination a.active {
+  background-color: #008cba;
+  color: white;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #008cba;
+  color: white;
+}
+
+.active {
+  background-color: #008cba;
+  color: white;
+}

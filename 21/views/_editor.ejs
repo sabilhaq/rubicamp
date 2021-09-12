@@ -1,0 +1,58 @@
+<% if ( data.page != "add" ) { %>
+<div class="row">
+  <div class="label">
+    <label for="string">ID</label>
+  </div>
+  <div class="input">
+    <input disabled type="number" name="id" value="<%= data.id %>" placeholder="String">
+  </div>
+</div>
+<% } %>
+
+<div class="row">
+  <div class="label">
+    <label for="string">String</label>
+  </div>
+  <div class="input">
+    <input type="text" name="string" value="<%= data.string_type %>" placeholder="String">
+  </div>
+</div>
+
+<div class="row">
+  <div class="label">
+    <label for="integer">Integer</label>
+  </div>
+  <div class="input">
+    <input type="number" name="integer" value="<%= data.integer_type %>" placeholder="Integer">
+  </div>
+</div>
+
+<div class="row">
+  <div class="label">
+    <label for="float">Float</label>
+  </div>
+  <div class="input">
+    <input type="number" step="any" name="float" value="<%= data.float_type %>" placeholder="Float">
+  </div>
+</div>
+
+<div class="row">
+  <div class="label">
+    <label for="date">Date</label>
+  </div>
+  <div class="input">
+    <input type="date" name="date" value="<%= data.date_type %>" placeholder="end date">
+  </div>
+</div>
+
+<div class="row">
+  <div class="label">
+    <label for="boolean">Boolean</label>
+  </div>
+  <div class="input">
+    <select name="boolean" id="boolean">
+      <option value="true" <%= data.boolean_type ? "selected" : "" %>>True</option>
+      <option value="false" <%= !data.boolean_type ? "selected" : "" %>>False</option>
+    </select>
+  </div>
+</div>
