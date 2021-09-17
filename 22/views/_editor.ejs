@@ -1,0 +1,57 @@
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="_id">ID</label>
+  </div>
+  <div class="col-auto w-75">
+    <input <%= item.page != "add" ? "disabled" : "" %> type="text" id="_id" value="<%= item._id %>" class="form-control" placeholder="ID">
+  </div>
+</div>
+
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="string_type">String</label>
+  </div>
+  <div class="col-auto w-75">
+    <input type="text" id="string_type" value="<%= item.string_type %>" name="string_type" class="form-control" placeholder="String">
+  </div>
+</div>
+
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="integer_type">Integer</label>
+  </div>
+  <div class="col-auto w-75">
+    <input type="number" id="integer_type" value="<%= item.integer_type %>" class="form-control" placeholder="Integer">
+  </div>
+</div>
+
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="float_type">Float</label>
+  </div>
+  <div class="col-auto w-75">
+    <input type="number" id="float_type" value="<%= item.float_type %>" class="form-control" placeholder="Float" step="any">
+  </div>
+</div>
+
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="date_type">Date</label>
+  </div>
+  <div class="col-auto w-75">
+    <input type="date" id="date_type" value="<%= item.date_type %>" name="date_type" class="form-control" placeholder="Date" step="any">
+  </div>
+</div>
+
+<div class="row mb-3 align-items-center justify-content-between">
+  <div class="col-auto">
+    <label class="form-check-label" for="boolean_type">Boolean</label>
+  </div>
+  <div class="col-auto w-75">
+    <select id="boolean_type" name="boolean_type" class="form-select" aria-label="Default select example">
+      <option value="" disabled selected hidden>Choose the boolean ...</option>
+      <option value="true" <%= item.boolean_type ? "selected" : "" %>>True</option>
+      <option value="false" <%= !item.boolean_type ? "selected" : "" %>>False</option>
+    </select>
+  </div>
+</div>

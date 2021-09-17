@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Data</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+  <div class="container add-form-container">
+    <h1>Add Data</h1>
+
+    <form id="form-add" action="" method="post">
+      <%- include("_editor") -%>
+
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-outline-secondary cancel" href="/">Cancel</a>
+    </form>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#form-add').submit(function(event) {
+        event.preventDefault()
+        let _id = $("#_id").val()
+        let string_type = $("#string_type").val()
+        let integer_type = $("#integer_type").val()
+        let float_type = $("#float_type").val()
+        let date_type = $("#date_type").val()
+        let boolean_type = $("#boolean_type").val()
+
+        const data = {
+          _id,
+          string_type,
+          integer_type,
+          float_type,
+          date_type,
+          boolean_type
+        }
+
+        console.log("data saveData:", data);
+        addData(data)
+      })
+    })
+
+    const addData = (data) => {
+      $.ajax({
+        method: "POST",
+        url: "http://localhost:3000/types/add",
+        data: data
+      }).done(function() {
+        window.location.replace("http://localhost:3000")
+      }).fail(function(err) {
+        alert(err)
+      })
+    }
+  </script>
+</body>
+
+</html>
