@@ -5,3 +5,6 @@ challenge3.js
 *copy.js
 university.sql
 package-lock.json
+.db
+.sql
+.env
