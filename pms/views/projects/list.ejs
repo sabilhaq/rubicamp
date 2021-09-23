@@ -1,0 +1,175 @@
+<%- include("../partials/header") -%>
+<style>
+  a {
+    text-decoration: none;
+  }
+</style>
+</head>
+
+<body>
+  <%- include("../partials/navbar") -%>
+
+  <div class="container">
+    <div class="container projects-container">
+      <h1>Projects</h1>
+      <hr>
+
+      <div class="container filters-container">
+        <h2>Filters</h2>
+
+        <form id="form-filter" action="" method="get" class="m-auto mb-3" style="max-width: 500px;">
+          <input type="hidden" value="1" id="page" name="page" class="form-control">
+
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col-auto">
+              <input <%= queryParamObj.projectidcheck && "checked" %> type="checkbox" class="form-check-input" id="projectidcheck" name="projectidcheck">
+              <label class="form-check-label" for="projectidcheck">ID</label>
+            </div>
+            <div class="col-auto w-75">
+              <input value="<%= queryParamObj.projectid %>" type="text" id="projectid" name="projectid" class="form-control" placeholder="ID">
+            </div>
+          </div>
+
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col-auto">
+              <input <%= queryParamObj.namecheck && "checked" %> type="checkbox" class="form-check-input" id="namecheck" name="namecheck">
+              <label class="form-check-label" for="namecheck">Name</label>
+            </div>
+            <div class="col-auto w-75">
+              <input value="<%= queryParamObj.name %>" type="text" id="name" name="name" class="form-control" placeholder="Name">
+            </div>
+          </div>
+
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col-auto">
+              <input <%= queryParamObj.membercheck && "checked" %> type="checkbox" class="form-check-input" id="membercheck" name="membercheck">
+              <label class="form-check-label" for="membercheck">Member</label>
+            </div>
+            <div class="col-auto w-75">
+              <select id="member" name="member" class="form-select" aria-label="Default select example">
+                <option value="" disabled selected hidden>Choose the member ...</option>
+                <% for( let i = 0; i < memberOptions.length; i++ ) { %>
+
+                <option <%= memberOptions[i] == queryParamObj.member && "selected" %> value="<%= memberOptions[i] %>"><%= memberOptions[i] %></option>
+
+                <% } %>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+      </div>
+
+      <div class="container options-container">
+        <h2>Options</h2>
+
+        <form id="form-filter" action="/projects/option" method="POST" class="w-75 justify-content-between">
+          <!-- <input type="hidden" value="1" id="firstpage" class="form-control"> -->
+
+          <div class="row mb-3 justify-content-between" style="max-width: 310px;">
+            <div class="col-auto">
+              <p>Columns</p>
+            </div>
+
+            <div class="col-auto">
+              <div class="row mb-3 align-items-center justify-content-between">
+                <div class="col-auto">
+                  <input type="checkbox" class="form-check-input" id="projectidcolumn" name="projectidcolumn" <%= config.projectidcolumn ? "checked" : "" %>>
+                  <label class="form-check-label" for="projectidcolumn">ID</label>
+                </div>
+              </div>
+
+              <div class="row mb-3 align-items-center justify-content-between">
+                <div class="col-auto">
+                  <input type="checkbox" class="form-check-input" id="namecolumn" name="namecolumn" <%= config.namecolumn ? "checked" : "" %>>
+                  <label class=" form-check-label" for="namecolumn">Name</label>
+                </div>
+              </div>
+
+              <div class="row mb-3 align-items-center justify-content-between">
+                <div class="col-auto">
+                  <input type="checkbox" class="form-check-input" id="membercolumn" name="membercolumn" <%= config.membercolumn ? "checked" : "" %>>
+                  <label class=" form-check-label" for="membercolumn">Members</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Apply</button>
+        </form>
+      </div>
+
+      <div class="container table-container mt-3">
+        <table id="table-pms" class="table table-striped table-hover">
+          <thead>
+            <tr>
+
+              <% if (config.projectidcolumn) { %>
+              <th>#</th>
+              <% } %>
+              <% if (config.namecolumn) { %>
+              <th>Name</th>
+              <% } %>
+              <% if (config.membercolumn) { %>
+              <th>Members</th>
+              <% } %>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <% for( let i = 0; i < data.length; i++ ) { %>
+
+            <tr>
+              <% if (config.projectidcolumn) { %>
+              <td>
+                <a href="/projects/overview/<%= data[i].projectid %>"><%= data[i].projectid %></a>
+              </td>
+              <% } %>
+              <% if (config.namecolumn) { %>
+              <td><%= data[i].name %></td>
+              <% } %>
+              <% if (config.membercolumn) { %>
+              <td><%= data[i].member %></td>
+              <% } %>
+
+              <td>
+                <a href="/projects/edit/<%= data[i].projectid %>" class="btn btn-success" role="button">Edit</a>
+                <a href="/projects/delete/<%= data[i].projectid %>" class="btn btn-danger btn-delete" role="button">Delete</a>
+              </td>
+            </tr>
+
+            <% } %>
+
+          </tbody>
+        </table>
+
+        <nav aria-label="...">
+          <ul id="pagination-pms" class="pagination">
+
+            <li class="page-item <%= pagination.currentPage == 1 || !pagination.currentPage ? "disabled" : "" %>">
+              <a href="<%= "/projects" + queryPage + (pagination.currentPage-1) + queryParam %>" class="page-link">Previous</a>
+            </li>
+
+            <% for (let i = 1; i <= pagination.totalPage; i++) { %>
+
+            <li class="page-item <%= pagination.currentPage == i ? "active" : "" %>" aria-current="page">
+              <a id="changepage" class="page-link" href="<%= "/projects" + queryPage + i  + queryParam %>"><%= i %></a>
+            </li>
+
+            <% } %>
+
+            <li class="page-item <%= pagination.currentPage == pagination.totalPage ? "disabled" : "" %>">
+              <a href="<%= "/projects" + queryPage + (pagination.currentPage+1) + queryParam %>" class="page-link">Next</a>
+            </li>
+
+          </ul>
+        </nav>
+
+        <a href="/projects/add" class="btn btn-primary" role="button">Add</a>
+      </div>
+    </div>
+  </div>
+
+  <%- include("../partials/footer") -%>

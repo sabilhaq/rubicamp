@@ -1,0 +1,55 @@
+<%- include("../partials/header") -%>
+</head>
+
+<body>
+  <%- include("../partials/navbar") -%>
+
+  <div class="container">
+    <h1>Edit Project</h1>
+    <hr>
+
+    <div class="container">
+      <form id="form-edit" action="" method="POST" class="m-auto" style="max-width: 650px;">
+        <div class="row mb-3 align-items-center justify-content-between">
+          <div class="col-auto">
+            <label class="form-check-label" for="projectid">ID</label>
+          </div>
+          <div class="col-auto w-75">
+            <input value="<%= project.projectid %>" type="text" id="projectid" name="projectid" class="form-control" placeholder="ID" disabled>
+          </div>
+        </div>
+
+        <div class="row mb-3 align-items-center justify-content-between">
+          <div class="col-auto">
+            <label class="form-check-label" for="name">Name</label>
+          </div>
+          <div class="col-auto w-75">
+            <input value="<%= project.name %>" type="text" id="name" name="name" class="form-control" placeholder="Project Name">
+          </div>
+        </div>
+
+        <div class="row mb-3 align-items-center justify-content-between">
+          <div class="col-auto align-self-start">
+            <label class="form-check-label" for="member">Members</label>
+          </div>
+          <div class="col-auto w-75">
+            <% for( let i = 0; i < memberOptions.length; i++ ) { %>
+
+            <div class="row mb-3 align-items-center justify-content-between">
+              <div class="col-auto">
+                <input <%= project.members?.includes(memberOptions[i].firstname) && "checked" %> type="checkbox" class="form-check-input" id="<%= memberOptions[i].userid %>" name="<%= memberOptions[i].userid %>">
+                <label class="form-check-label" for="<%= memberOptions[i].userid %>"><%= memberOptions[i].firstname %></label>
+              </div>
+            </div>
+
+            <% } %>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Update</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+<%- include("../partials/footer") -%>
