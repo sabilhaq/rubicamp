@@ -169,6 +169,11 @@
       return false
     })
 
+    $(document).on('click', '.sortthead', function(event) {
+      const sortString = $(this).attr('data-sort')
+      sortTable(sortString)
+    })
+
     const loadAddForm = () => {
       let htmlAddForm = ""
 
@@ -385,12 +390,12 @@
         let htmlThead = ""
         htmlThead += `
           <tr>
-            <th onclick="sortTable('_id,${data.order},${data.stringparam},${data.pagination.currentPage}')">ID <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
-            <th onclick="sortTable('string_type,${data.order},${data.stringparam},${data.pagination.currentPage}')">String <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
-            <th onclick="sortTable('integer_type,${data.order},${data.stringparam},${data.pagination.currentPage}')">Integer <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
-            <th onclick="sortTable('float_type,${data.order},${data.stringparam},${data.pagination.currentPage}')">Float <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
-            <th onclick="sortTable('date_type,${data.order},${data.stringparam},${data.pagination.currentPage}')">Date <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
-            <th onclick="sortTable('boolean_type,${data.order},${data.stringparam},${data.pagination.currentPage}')">Boolean <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="_id,${data.order},${data.stringparam},${data.pagination.currentPage}">ID <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="string_type,${data.order},${data.stringparam},${data.pagination.currentPage}">String <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="integer_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Integer <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="float_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Float <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="date_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Date <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="boolean_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Boolean <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
             <th>Actions</th>
           </tr>
         `
