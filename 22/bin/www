@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('cobaajax:server');
+var debug = require('debug')('22-revisi:server');
 var http = require('http');
 
 /**

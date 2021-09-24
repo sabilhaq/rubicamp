@@ -1,11 +1,15 @@
-var express = require("express");
-var router = express.Router();
+var expres = require("express");
+var router = expres.Router();
 
 module.exports = function (db) {
   const collection = db.collection("data-type");
   router.get("/", async function (req, res, next) {
     try {
+      // Variables
       let order;
+      let data = {};
+      let query = {};
+      let sort = {};
       let pagination = {
         totalData: 0,
         totalPage: 3,
@@ -14,9 +18,6 @@ module.exports = function (db) {
         offset: 0,
       };
       let filters = [];
-      let query = {};
-      let sort = {};
-      let data = {};
 
       // Filter
       if (req.query._id) {
@@ -57,11 +58,8 @@ module.exports = function (db) {
       pagination.totalPage = Math.ceil(
         pagination.totalData / pagination.perPage
       );
-      if (req.query.newfilter) {
-        pagination.currentPage = 1;
-      } else {
-        pagination.currentPage = Number(req.query.page ? req.query.page : 1);
-      }
+      pagination.totalPage = pagination.totalPage ? pagination.totalPage : 1;
+      pagination.currentPage = Number(req.query.page ? req.query.page : 1);
       pagination.offset = (pagination.currentPage - 1) * pagination.perPage;
 
       // Sort
@@ -120,18 +118,15 @@ module.exports = function (db) {
     }
   });
 
-  router.get("/add", function (req, res, next) {
-    res.render("add", { item: { page: "add" } });
-  });
-
   router.post("/add", async function (req, res, next) {
     try {
+      const lastId = await collection.count();
       const obj = {
-        _id: parseInt(req.body._id),
+        _id: lastId + 1,
         string_type: req.body.string_type,
         integer_type: parseInt(req.body.integer_type),
         float_type: parseFloat(req.body.float_type),
-        date_type: new Date(req.body.date_type),
+        date_type: (req.body.date_type && new Date(req.body.date_type)) || null,
         boolean_type: req.body.boolean_type == "true" ? true : false,
       };
       const data = await collection.insertOne(obj);
@@ -150,7 +145,7 @@ module.exports = function (db) {
       item.date_type = item.date_type
         ? item.date_type.toISOString().slice(0, 10)
         : "";
-      res.render("edit", { item });
+      res.json(item);
     } catch (err) {
       res.status(500).json({ err });
     }
