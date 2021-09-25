@@ -48,6 +48,17 @@
       deleteData($(this).attr('iditem'))
     })
 
+    $(document).on('click', '.sortthead', function(event) {
+      const sortString = $(this).attr('data-sort')
+      sortTable(sortString)
+    })
+
+    // $(document).on('click', '.sortthead', function(event) {
+    //   event.preventDefault()
+    //   const sortString = $(this).attr('data-sort')
+    //   sortTable(sortString)
+    // })
+
     $(document).on('submit', '#form-filter', function(event) {
       event.preventDefault()
       let filters = [];
@@ -167,11 +178,6 @@
 
       updateData(data)
       return false
-    })
-
-    $(document).on('click', '.sortthead', function(event) {
-      const sortString = $(this).attr('data-sort')
-      sortTable(sortString)
     })
 
     const loadAddForm = () => {
@@ -371,19 +377,19 @@
         let htmlPagination = ""
         htmlPagination += `
           <li class="page-item ${data.pagination.currentPage == 1 || !data.pagination.currentPage ? "disabled" : ""}">
-            <a onclick="return changePage(${data.pagination.currentPage - 1})" class="page-link" href="${formatPage(data.filters, data.pagination.currentPage - 1, data.queryParams)}">Previous</a>
+            <a data-page="${data.pagination.currentPage - 1}" class="page-link" href="${formatPage(data.filters, data.pagination.currentPage - 1, data.queryParams)}">Previous</a>
           </li>
         `
         for (let i = 1; i < data.pagination.totalPage + 1; i++) {
           htmlPagination += `
             <li class="page-item ${data.pagination.currentPage == i ? "active" : ""}" aria-current="page">
-              <a id="changepage" data-param="${data.stringparam}" onclick="return changePage(${i})" class="page-link" href="${formatPage(data.filters, i, data.queryParams)}">${i}</a>
+              <a data-page="${i}" id="changepage" data-param="${data.stringparam}" class="page-link" href="${formatPage(data.filters, i, data.queryParams)}">${i}</a>
             </li>
             `
         }
         htmlPagination += `
           <li class="page-item ${data.pagination.currentPage == data.pagination.totalPage ? "disabled" : ""}"">
-            <a onclick="return changePage(${data.pagination.currentPage + 1})" class="page-link" href="${formatPage(data.filters, data.pagination.currentPage + 1, data.queryParams)}">Next</a>
+            <a data-page="${data.pagination.currentPage + 1}" class="page-link" href="${formatPage(data.filters, data.pagination.currentPage + 1, data.queryParams)}">Next</a>
           </li>
         `
 
@@ -569,6 +575,12 @@
         return formatedQueryParams.concat(`&page=${i}`);
       }
     }
+
+    $(document).on('click', '.page-link', function(event) {
+      event.preventDefault()
+      const pageNext = $(this).attr('data-page')
+      changePage(pageNext)
+    })
 
     function changePage(pageNext) {
       var stringparam = $("#changepage").attr('data-param')
