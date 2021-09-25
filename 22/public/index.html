@@ -53,11 +53,11 @@
       sortTable(sortString)
     })
 
-    // $(document).on('click', '.sortthead', function(event) {
-    //   event.preventDefault()
-    //   const sortString = $(this).attr('data-sort')
-    //   sortTable(sortString)
-    // })
+    $(document).on('click', '.page-link', function(event) {
+      event.preventDefault()
+      const pageNext = $(this).attr('data-page')
+      changePage(pageNext)
+    })
 
     $(document).on('submit', '#form-filter', function(event) {
       event.preventDefault()
@@ -575,12 +575,6 @@
         return formatedQueryParams.concat(`&page=${i}`);
       }
     }
-
-    $(document).on('click', '.page-link', function(event) {
-      event.preventDefault()
-      const pageNext = $(this).attr('data-page')
-      changePage(pageNext)
-    })
 
     function changePage(pageNext) {
       var stringparam = $("#changepage").attr('data-param')
