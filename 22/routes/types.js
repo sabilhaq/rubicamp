@@ -111,6 +111,7 @@ module.exports = function (db) {
       data.queryParams = req.url;
       data.stringparam = req.url.slice(2);
       data.order = req.query.order;
+      data.sort = req.query.sort;
 
       res.json(data);
     } catch (err) {

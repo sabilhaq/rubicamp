@@ -396,7 +396,7 @@
         let htmlThead = ""
         htmlThead += `
           <tr>
-            <th class="sortthead" data-sort="_id,${data.order},${data.stringparam},${data.pagination.currentPage}">ID <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
+            <th class="sortthead" data-sort="_id,${data.sort},${data.order},${data.stringparam},${data.pagination.currentPage}">ID <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
             <th class="sortthead" data-sort="string_type,${data.order},${data.stringparam},${data.pagination.currentPage}">String <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
             <th class="sortthead" data-sort="integer_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Integer <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
             <th class="sortthead" data-sort="float_type,${data.order},${data.stringparam},${data.pagination.currentPage}">Float <i class="fa fa-sort" style="font-size:12px; cursor: pointer;"></i></th>
@@ -596,17 +596,21 @@
     }
 
     function sortTable(sortString) {
-      let [sortBy, sortOrder, stringparam, pageNext] = sortString.split(",")
-      switch (sortOrder) {
-        case "asc":
-          sortOrder = "desc"
-          break;
-        case "desc":
-          sortOrder = ""
-          break;
-        default:
-          sortOrder = "asc"
-          break;
+      let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(",")
+      if (sortBy == oldSortBy) {
+        switch (sortOrder) {
+          case "asc":
+            sortOrder = "desc"
+            break;
+          case "desc":
+            sortOrder = ""
+            break;
+          default:
+            sortOrder = "asc"
+            break;
+        }
+      } else {
+        sortOrder = "asc"
       }
 
       let filterParams = stringparam === 'undefined' ? "" : stringparam
