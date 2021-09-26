@@ -6,7 +6,50 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-function filterQueryParam(param, query) {
+function filterQueryParamMembers(param, query, projectid) {
+  let i = 0;
+  let filters = [];
+  let args = [];
+
+  filters.push({ name: "projectid", value: projectid });
+
+  if (param.useridcheck && param.userid) {
+    filters.push({ name: "userid", value: parseInt(param.userid) });
+  }
+  if (param.firstnamecheck && param.firstname) {
+    filters.push({ name: "firstname", value: param.firstname });
+  }
+  if (param.positioncheck && param.position) {
+    filters.push({ name: "position", value: param.position });
+  }
+
+  if (filters.length > 0) {
+    for (; i < filters.length; i++) {
+      switch (filters[i].name) {
+        case "userid":
+          query += ` AND members.userid = $${i + 1}`;
+          args.push(parseInt(param.userid));
+          break;
+        case "firstname":
+          query += ` AND firstname LIKE $${i + 1}`;
+          args.push("%" + param.firstname + "%");
+          break;
+        case "position":
+          query += ` AND role = $${i + 1}`;
+          args.push(param.position);
+          break;
+        default:
+          query += ` AND projectid = $${i + 1}`;
+          args.push(projectid);
+          break;
+      }
+    }
+  }
+  query = query.replace(" AND", "");
+  return [query, args, i];
+}
+
+function filterQueryParamProjects(param, query) {
   let i = 0;
   let filters = [];
   let args = [];
@@ -22,23 +65,19 @@ function filterQueryParam(param, query) {
 
   if (filters.length > 0) {
     for (; i < filters.length; i++) {
-      const filter = filters[i];
       switch (filters[i].name) {
         case "projectid":
           query += ` AND projectid = $${i + 1}`;
-          args.push(param.projectid);
+          args.push(parseInt(param.projectid));
           break;
-
         case "name":
           query += ` AND name = $${i + 1}`;
           args.push(param.name);
           break;
-
         case "member":
           query += ` AND member LIKE $${i + 1}`;
           args.push("%" + param.member + "%");
           break;
-
         default:
           break;
       }
@@ -50,5 +89,6 @@ function filterQueryParam(param, query) {
 
 module.exports = {
   isLoggedIn,
-  filterQueryParam,
+  filterQueryParamProjects,
+  filterQueryParamMembers,
 };
