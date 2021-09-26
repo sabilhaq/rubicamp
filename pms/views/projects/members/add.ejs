@@ -1,0 +1,49 @@
+<%- include("../../partials/header") -%>
+</head>
+
+<body>
+  <%- include("../../partials/navbar") -%>
+
+  <div class="container">
+    <h1>Add Member</h1>
+    <hr>
+
+    <div class="container">
+      <form id="form-edit" action="" method="POST" class="m-auto" style="max-width: 650px;">
+        <div class="row mb-3 align-items-center justify-content-between">
+          <div class="col-auto">
+            <label class="form-check-label" for="member">Member</label>
+          </div>
+          <div class="col-auto w-75">
+            <select id="member" name="member" class="form-select" aria-label="Default select example">
+              <option value="" disabled selected hidden>Choose the member ...</option>
+              <% for( let i = 0; i < memberOptions.length; i++ ) { %>
+
+              <option value="<%= memberOptions[i].userid %>"><%= memberOptions[i].firstname %></option>
+
+              <% } %>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3 align-items-center justify-content-between">
+          <div class="col-auto">
+            <label class="form-check-label" for="position">Position</label>
+          </div>
+          <div class="col-auto w-75">
+            <select id="position" name="position" class="form-select" aria-label="Default select example">
+              <option value="" disabled selected hidden>Choose the position ...</option>
+              <option value="Manager">Manager</option>
+              <option value="Programmer">Programmer</option>
+              <option value="Quality Assurance">Quality Assurance</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+<%- include("../../partials/footer") -%>
