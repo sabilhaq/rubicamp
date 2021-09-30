@@ -1,0 +1,415 @@
+<%- include("../../partials/header") -%>
+
+<%- include("../../partials/sidebar-style") -%>
+</head>
+
+<body style="overflow: hidden;">
+  <%- include("../../partials/navbar") -%>
+  <div class="container p-0" style="max-width: none;">
+    <div class="d-flex" style="height: 100vh;">
+      <%- include("../../partials/sidebar") -%>
+
+      <div style="overflow: auto;" class="pt-3 tab-content w-100" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-issues" role="tabpanel" aria-labelledby="v-pills-issues-tab">
+          <div class="container ps-0" style="max-width: none;">
+            <h1>Edit Issue</h1>
+            <hr>
+
+            <div class="border rounded p-3" style="max-width: 1200px; margin-bottom: 75px;">
+              <form enctype="multipart/form-data" id="form-edit-issue" action="" method="POST" class="m-3">
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="issueid">Issue ID</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input disabled type="text" value="<%= issue.issueid %>" id="issueid" name="issueid" class="form-control" placeholder="Issue ID">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="projectid">Project ID</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input disabled type="text" value="<%= issue.projectid %>" id="projectid" name="projectid" class="form-control" placeholder="Project ID">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto align-self-start">
+                    <label class="form-check-label" for="tracker">Tracker</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.tracker == "bug" && "checked" %> class="form-check-input" value="bug" id="bug" name="tracker">
+                        <label class="form-check-label" for="bug">Bug</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.tracker == "feature" && "checked" %> class="form-check-input" value="feature" id="feature" name="tracker">
+                        <label class="form-check-label" for="feature">Feature</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.tracker == "support" && "checked" %> class="form-check-input" value="support" id="support" name="tracker">
+                        <label class="form-check-label" for="support">Support</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="subject">Subject</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="text" value="<%= issue.subject %>" id="subject" name="subject" class="form-control" placeholder="Subject">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto align-self-start pt-1">
+                    <label class="form-check-label" for="description">Description</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <textarea form="form-edit-issue" id="description" name="description" class="form-control" placeholder="Description" cols="35" rows="3"><%= issue.description %></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto align-self-start">
+                    <label class="form-check-label" for="status">Status</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "New" && "checked" %> class="form-check-input" value="New" id="New" name="status">
+                        <label class="form-check-label" for="New">New</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "In Progress" && "checked" %> class="form-check-input" id="In value" id="In Progress" name="status">
+                        <label class="form-check-label" for="In Progress">In Progress</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "Resolved" && "checked" %> class="form-check-input" value="Resolved" id="Resolved" name="status">
+                        <label class="form-check-label" for="Resolved">Resolved</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "Feedback" && "checked" %> class="form-check-input" value="Feedback" id="Feedback" name="status">
+                        <label class="form-check-label" for="Feedback">Feedback</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "Closed" && "checked" %> class="form-check-input" value="Closed" id="Closed" name="status">
+                        <label class="form-check-label" for="Closed">Closed</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.status == "Rejected" && "checked" %> class="form-check-input" value="Rejected" id="Rejected" name="status">
+                        <label class="form-check-label" for="Rejected">Rejected</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto align-self-start">
+                    <label class="form-check-label" for="priority">Priority</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.priority == "normal" && "checked" %> class="form-check-input" value="normal" id="normal" name="priority">
+                        <label class="form-check-label" for="normal">Normal</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.priority == "high" && "checked" %> class="form-check-input" value="high" id="high" name="priority">
+                        <label class="form-check-label" for="high">High</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.priority == "urgent" && "checked" %> class="form-check-input" value="urgent" id="urgent" name="priority">
+                        <label class="form-check-label" for="urgent">Urgent</label>
+                      </div>
+                    </div>
+
+                    <div class="row mb-1 align-items-center justify-content-between">
+                      <div class="col-auto">
+                        <input type="radio" <%= issue.priority == "immediate" && "checked" %> class="form-check-input" value="immediate" id="immediate" name="priority">
+                        <label class="form-check-label" for="immediate">Immediate</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="assignee">Assignee</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select id="assignee" name="assignee" class="form-select" aria-label="Default select example">
+                      <option value="" disabled selected hidden>Choose the assignee ...</option>
+                      <% for( let i = 0; i < assigneeOptions.length; i++ ) { %>
+
+                      <option <%= issue.assignee == assigneeOptions[i].userid && "selected" %> value="<%= assigneeOptions[i].userid %>"><%= assigneeOptions[i].firstname %></option>
+
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="startdate">Start Date</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="date" value="<%= issue.startdate ? issue.startdate.toISOString().slice(0,10) : "" %>" id="startdate" name="startdate" class="form-control" placeholder="Start Date">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="duedate">Due Date</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="date" value="<%= issue.duedate ? issue.duedate.toISOString().slice(0,10) : "" %>" id="duedate" name="duedate" class="form-control" placeholder="Due Date">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="estimatedtime">Estimated Time</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="number" value="<%= issue.estimatedtime %>" step="any" id="estimatedtime" name="estimatedtime" class="form-control" placeholder="Estimated Time">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="spenttime">Spent Time</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="number" value="<%= issue.spenttime %>" step="any" id="spenttime" name="spenttime" class="form-control" placeholder="Spent Time">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="targetversion">Target Version</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <input type="text" value="<%= issue.targetversion %>" id="targetversion" name="targetversion" class="form-control" placeholder="Target Version">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="author">Author</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select disabled id="author" name="author" class="form-select" aria-label="Default select example">
+                      <option value="" disabled selected hidden>Choose the author ...</option>
+                      <% for( let i = 0; i < assigneeOptions.length; i++ ) { %>
+
+                      <option <%= issue.author == assigneeOptions[i].userid && "selected" %> value="<%= assigneeOptions[i].userid %>"><%= assigneeOptions[i].firstname %></option>
+
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="createddate">Created Date</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <% issue.createddate.setHours(issue.createddate.getHours() - (issue.createddate.getTimezoneOffset() / 60)) %>
+                    <input disabled type="datetime-local" value="<%= issue.createddate.toISOString().slice(0,19) %>" id="createddate" name="createddate" class="form-control" placeholder="Created Date">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="updateddate">Updated Date</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <% if (issue.updateddate) issue.updateddate.setHours(issue.updateddate.getHours() - (issue.updateddate.getTimezoneOffset() / 60)) %>
+                    <input disabled type="datetime-local" value="<%= issue.updateddate && issue.updateddate.toISOString().slice(0,19) || "" %>" id="updateddate" name="updateddate" class="form-control" placeholder="Updated Date">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="closeddate">Closed Date</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <% if (issue.closeddate) issue.closeddate.setHours(issue.closeddate.getHours() - (issue.closeddate.getTimezoneOffset() / 60)) %>
+                    <input type="datetime-local" value="<%= issue.closeddate && issue.closeddate.toISOString().slice(0,19) || "" %>" id="closeddate" name="closeddate" class="form-control" placeholder="Closed Date">
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="parenttask">Parent Task</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select id="parenttask" name="parenttask" class="form-select" aria-label="Default select example">
+                      <option value="" disabled selected hidden>Choose the parent task ...</option>
+                      <% for( let i = 0; i < issueOptions.length; i++ ) { %>
+
+                      <option <%= issue.parenttask == issueOptions[i].issueid && "selected" %> value="<%= issueOptions[i].issueid %>"><%= issueOptions[i].subject %></option>
+
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="done">% done</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select id="done" name="done" class="form-select" aria-label="Default select example">
+                      <% for( let i = 0; i <= 100; i+=10 ) { %>
+                      <option <%= issue.done == i && "selected" %> value="<%= i %>"><%= i %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- FILES -->
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto align-self-start pt-2">
+                    <label class="form-check-label" for="files0">Files</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <% if (issue.files) { %>
+                    <div class="col-auto mb-3 d-flex file-input">
+                      <% for( let i = 0; i < issue.files.length; i++ ) { %>
+
+                      <input type="hidden" name="oldfile" value="<%= issue.files[i].name %>,<%= issue.files[i].mimetype %>,<%= issue.files[i].path %>">
+
+                      <div class="d-flex">
+                        <% let [fileName, extension] = issue.files[i].name.split(".") %>
+                        <% if ((extension == "jpg") || (extension == "png") || (extension == "svg")) { %>
+                        <img data-tag="img" data-id="oldimg<%= i %>" style="max-width: 100px;" src="<%= issue.files[i].path %>" alt="tes">
+                        <% } else { %>
+                        <a data-tag="a" href="<%= issue.files[i].path %>"><%= issue.files[i].name %> </a>
+                        <% } %>
+                        <button type="button" class="btn btn-outline-danger mx-3 align-self-end delete-old-file">x</button>
+                      </div>
+
+                      <% } %>
+
+                      <button hidden type="button" class="btn btn-outline-danger ms-3 delete-file-input">-</button>
+                    </div>
+                    <% } %>
+                    <button id="edit-file-form" type="button" class="btn btn-outline-primary">+</button>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Update</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let countFileInput = 0
+    // New Input File
+    $("#form-edit-issue").on('click', '#edit-file-form', function(event) {
+      event.preventDefault()
+
+      $('#edit-file-form').before(`
+        <div class="col-auto mb-3 d-flex file-input">
+          <input type="file" data-id="${countFileInput}" id="files${countFileInput}" name="files${countFileInput}" class="form-control file-preview" placeholder="Files">
+          <button type="button" class="btn btn-outline-danger ms-3 delete-file-input">-</button>
+        </div>
+      `)
+      countFileInput++
+    })
+
+    // Show Preview
+    $('#form-edit-issue').on('change', '.file-preview', function(event) {
+      let tes = $(this).val().split(".")
+      switch (tes.pop()) {
+        case "jpg":
+        case "png":
+        case "svg":
+
+          var reader = new FileReader();
+          reader.onload = function() {
+            $(`#img${idFile}`).attr("src", reader.result)
+            return false;
+          }
+
+          let idFile = $(this).attr('data-id')
+
+          let idImgOne = $(this).parent().prev().attr('data-id')
+          if (idImgOne == "img-preview") {
+            $(this).parent().prev().html(`
+              <div data-id="img-preview"><img id="img${idFile}" src="" alt="your image" class="mb-2" style="max-width:100px;" /></div>
+            `)
+          } else {
+            $(this).parent().before(`
+              <div data-id="img-preview"><img id="img${idFile}" src="" alt="your image" class="mb-2" style="max-width:100px;" /></div>
+            `)
+          }
+          reader.readAsDataURL(event.target.files[0]);
+
+          break;
+
+        default:
+          break;
+      }
+      return false
+    })
+
+    $("#form-edit-issue").on('click', '.delete-old-file', function(event) {
+      $(this).parent().prev().attr('disabled', true)
+      $(this).parent().remove();
+    })
+
+    $("#form-edit-issue").on('click', '.delete-file-input', function(event) {
+      event.preventDefault()
+
+      let idFile = $(this).parent().prev().attr('data-id')
+      let firstInput = $(this).prev().attr('data-id')
+
+      if (idFile == "img-preview") {
+        $(this).parent().prev().remove();
+      }
+      $(this).parent().remove();
+    })
+  </script>
+</body>
+
+<%- include("../../partials/footer") -%>
