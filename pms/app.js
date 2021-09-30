@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var session = require("express-session");
+const fileUpload = require("express-fileupload");
 
 const { Pool } = require("pg");
 // pools will use environment variables
@@ -37,9 +38,10 @@ app.use(
     secret: "pms",
     resave: false,
     saveUninitialized: true,
-    // cookie: { secure: true }
   })
 );
+// enable files upload
+app.use(fileUpload());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
