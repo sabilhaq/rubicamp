@@ -195,8 +195,9 @@ module.exports = function (db) {
             }
             res.redirect("/projects");
           });
+        } else {
+          res.redirect("/projects");
         }
-        res.redirect("/projects");
       });
     }
   });
