@@ -47,9 +47,9 @@
                   <div class="col-auto w-75">
                     <select id="tracker" name="tracker" class="form-select" aria-label="Default select example">
                       <option value="" disabled selected hidden>Choose the tracker ...</option>
-                      <option value="bug">Bug</option>
-                      <option value="feature">Feature</option>
-                      <option value="support">Support</option>
+                      <option <%= queryParamObj.tracker == "bug" && "selected" %> value="bug">Bug</option>
+                      <option <%= queryParamObj.tracker == "feature" && "selected" %> value="feature">Feature</option>
+                      <option <%= queryParamObj.tracker == "support" && "selected" %> value="support">Support</option>
                     </select>
                   </div>
                 </div>
