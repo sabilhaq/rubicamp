@@ -1,13 +1,16 @@
 var express = require("express");
 var router = express.Router();
 var helper = require("../helpers/util");
+var path = require("path");
+var fs = require("fs");
 
 module.exports = function (db) {
   router.get("/", helper.isLoggedIn, function (req, res, next) {
     // INIT VARIABLES
-    let queryFilter = ``;
-    let query = ``;
-    let queryMember = `SELECT firstname FROM users`;
+    let queryFilter = "";
+    let query = "";
+    let queryTotalData = "";
+    let queryMember = `SELECT userid, firstname FROM users`;
     let queryConfig = `SELECT projectsconfig FROM users WHERE userid = $1`;
     let pagination = {
       totalPage: 1,
@@ -26,28 +29,26 @@ module.exports = function (db) {
       queryFilter
     );
 
-    query = `SELECT * FROM (
-      SELECT projects.projectid, name, STRING_AGG (firstname, ', ') AS "member"
+    let subquery = `
+      SELECT 
+        projects.projectid, 
+        projects.name, 
+        STRING_AGG (firstname, ', ' ORDER BY users.firstname) AS "member",
+        STRING_AGG (users.userid::text, ',' ) as userids
       FROM projects
       LEFT JOIN members ON members.projectid = projects.projectid
       LEFT JOIN users ON users.userid = members.userid
       GROUP BY projects.projectid
-      ORDER BY projects.projectid
-      ) as projectmember`;
-
-    let queryTotalData = `SELECT COUNT(*) as totaldata FROM (
-      SELECT projects.projectid, name, STRING_AGG (firstname, ', ') AS "member"
-      FROM projects 
-      LEFT JOIN members ON members.projectid = projects.projectid
-      LEFT JOIN users ON users.userid = members.userid
-      GROUP BY projects.projectid
-      ORDER BY projects.projectid
-      ) as projectmember`;
+    `;
 
     if (queryFilter) {
-      query += ` WHERE` + queryFilter;
-      queryTotalData += ` WHERE` + queryFilter;
+      subquery += ` HAVING` + queryFilter + ` ORDER BY projects.projectid`;
     }
+
+    query = `SELECT * FROM (${subquery}) as projectmember`;
+    queryTotalData = `SELECT COUNT(*) as totaldata 
+      FROM (${subquery}) as projectmember
+    `;
 
     // Add limit and offset to main query
     query += ` LIMIT 3 OFFSET $${i + 1}`;
@@ -59,7 +60,6 @@ module.exports = function (db) {
       }
 
       let config = {};
-
       results.rows[0].projectsconfig.forEach((column) => {
         switch (column) {
           case "projectid":
@@ -93,7 +93,10 @@ module.exports = function (db) {
 
           let memberOptions = [];
           members.rows.forEach((item) => {
-            memberOptions.push(item.firstname);
+            memberOptions.push({
+              userid: item.userid,
+              firstname: item.firstname,
+            });
           });
           // main query for projects list data combine the members
           db.query(query, [...args, pagination.offset], (err, results) => {
@@ -170,6 +173,7 @@ module.exports = function (db) {
         let projectid = results.rows[0].projectid;
 
         let valuesQuery = "";
+        let queryMember = "";
         let valuesQueryArr = [];
         let valuesArg = [];
         let i = 1;
@@ -182,13 +186,17 @@ module.exports = function (db) {
         }
         valuesQuery = valuesQueryArr.join(", ");
 
-        let queryMember = `INSERT INTO members(userid, projectid) VALUES ${valuesQuery}`;
-        db.query(queryMember, [...valuesArg], (err) => {
-          if (err) {
-            throw err;
-          }
-          res.redirect("/projects");
-        });
+        if (valuesQueryArr.length > 0) {
+          let queryMember = `INSERT INTO members(userid, projectid) VALUES ${valuesQuery}`;
+
+          db.query(queryMember, [...valuesArg], (err) => {
+            if (err) {
+              throw err;
+            }
+            res.redirect("/projects");
+          });
+        }
+        res.redirect("/projects");
       });
     }
   });
@@ -215,7 +223,8 @@ module.exports = function (db) {
         GROUP BY projects.projectid
         ORDER BY projects.projectid
         ) as projectmember
-        WHERE projectid = $1`;
+        WHERE projectid = $1
+      `;
       db.query(queryEditForm, [id], (err, results) => {
         if (err) {
           throw err;
@@ -232,21 +241,25 @@ module.exports = function (db) {
 
   router.post("/edit/:id", helper.isLoggedIn, function (req, res, next) {
     const id = parseInt(req.params.id);
-    let queryDelete = `DELETE FROM members WHERE projectid = $1`;
-
+    let queryDelete = `DELETE FROM members WHERE projectid = $1 RETURNING projectid`;
     db.query(queryDelete, [id], (err, results) => {
       if (err) {
         throw err;
       }
+      let projectid;
+      if (results.rows.length > 0) {
+        projectid = results.rows[0].projectid;
+      } else {
+        projectid = id;
+      }
 
       let queryEdit = `UPDATE projects SET name = $1 WHERE projectid = $2 RETURNING projectid`;
-
-      db.query(queryEdit, [req.body.name, id], (err, results) => {
+      db.query(queryEdit, [req.body.name, projectid], (err, results) => {
         if (err) {
           throw err;
         }
 
-        let projectid = results.rows[0].projectid;
+        const projectid = results.rows[0].projectid;
 
         let valuesQuery = "";
         let valuesQueryArr = [];
@@ -279,7 +292,6 @@ module.exports = function (db) {
   router.get("/delete/:id", helper.isLoggedIn, function (req, res, next) {
     const id = parseInt(req.params.id);
     let query = `DELETE FROM projects WHERE projectid = $1`;
-
     db.query(query, [id], (err, results) => {
       if (err) {
         throw err;
@@ -294,7 +306,7 @@ module.exports = function (db) {
     helper.isLoggedIn,
     function (req, res, next) {
       const projectid = parseInt(req.params.projectid);
-      let tabActive = "overview";
+      const tabActive = "overview";
       let queryProject = `SELECT * FROM projects WHERE projectid = $1`;
 
       db.query(queryProject, [projectid], (err, results) => {
@@ -354,7 +366,6 @@ module.exports = function (db) {
                     openSupports.push(issue);
                   }
                   break;
-
                 default:
                   break;
               }
@@ -379,23 +390,24 @@ module.exports = function (db) {
     }
   );
 
+  // Members
   router.get(
     "/:projectid/members",
     helper.isLoggedIn,
     function (req, res, next) {
       // INIT VARIABLES
+      const projectid = parseInt(req.params.projectid);
+      const queryParam = req.url.slice(8);
+      const tabActive = "members";
       let queryFilter = ``;
       let queryConfig = `SELECT membersconfig FROM users WHERE userid = $1`;
+      let queryParamObj = req.query;
+      let queryPage = "?page=";
       let subqueryTotalData = `SELECT members.userid, firstname, role 
         FROM members
         LEFT JOIN users ON users.userid = members.userid`;
-
-      let query = ``;
-      const projectid = parseInt(req.params.projectid);
-      let queryParamObj = req.query;
-      let queryPage = "?page=";
-      let queryParam = "";
-      let tabActive = "members";
+      let query = `SELECT members.userid, firstname, role FROM members
+        LEFT JOIN users ON users.userid = members.userid`;
       let config = {};
       let pagination = {
         totalPage: 1,
@@ -414,9 +426,6 @@ module.exports = function (db) {
         queryFilter,
         projectid
       );
-
-      query = `SELECT members.userid, firstname, role FROM members
-        LEFT JOIN users ON users.userid = members.userid`;
 
       if (queryFilter) {
         query += ` WHERE` + queryFilter;
@@ -480,30 +489,36 @@ module.exports = function (db) {
     }
   );
 
-  router.post("/members/option", helper.isLoggedIn, function (req, res, next) {
-    let args = [];
-    let query = `UPDATE users SET membersconfig = $1 WHERE userid = $2`;
-    if (req.body.useridcolumn) {
-      args.push("userid");
-    }
-    if (req.body.firstnamecolumn) {
-      args.push("firstname");
-    }
-    if (req.body.positioncolumn) {
-      args.push("position");
-    }
-    db.query(query, [args, req.session.user.userid], (err) => {
-      if (err) {
-        throw err;
+  router.post(
+    "/:projectid/members/option",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = req.params.projectid;
+      let args = [];
+      let query = `UPDATE users SET membersconfig = $1 WHERE userid = $2`;
+      if (req.body.useridcolumn) {
+        args.push("userid");
       }
-      res.redirect(`/projects/${req.body.projectid}/members`);
-    });
-  });
+      if (req.body.firstnamecolumn) {
+        args.push("firstname");
+      }
+      if (req.body.positioncolumn) {
+        args.push("position");
+      }
+      db.query(query, [args, req.session.user.userid], (err) => {
+        if (err) {
+          throw err;
+        }
+        res.redirect(`/projects/${projectid}/members`);
+      });
+    }
+  );
 
   router.get(
     "/:projectid/members/add",
     helper.isLoggedIn,
     function (req, res, next) {
+      const tabActive = "members";
       const projectid = req.params.projectid;
       let query = `SELECT users.userid, users.firstname FROM users
         WHERE users.userid NOT IN (
@@ -520,6 +535,8 @@ module.exports = function (db) {
         res.render("projects/members/add", {
           title: "Project Member Add",
           memberOptions: results.rows,
+          projectid,
+          tabActive,
         });
       });
     }
@@ -553,6 +570,7 @@ module.exports = function (db) {
     "/:projectid/members/edit/:userid",
     helper.isLoggedIn,
     function (req, res, next) {
+      const tabActive = "members";
       const projectid = parseInt(req.params.projectid);
       const userid = parseInt(req.params.userid);
       let queryMember = `SELECT users.userid, users.firstname, members.role, projectid
@@ -567,6 +585,8 @@ module.exports = function (db) {
         res.render("projects/members/edit", {
           title: "PMS Project Member Edit",
           member: results.rows[0],
+          projectid,
+          tabActive,
         });
       });
     }
@@ -610,6 +630,425 @@ module.exports = function (db) {
           throw err;
         }
         res.redirect(`/projects/${projectid}/members`);
+      });
+    }
+  );
+
+  // Issues
+  router.get(
+    "/:projectid/issues",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      // INIT VARIABLES
+      const projectid = req.params.projectid;
+      const tabActive = "issues";
+      const queryParam = req.url.slice(8);
+      const config = {};
+      const queryParamObj = req.query;
+      const pagination = {
+        totalPage: 1,
+        currentPage: 1,
+        perPage: 3,
+        offset: 0,
+        param: "",
+      };
+      let queryFilter = "";
+      let queryPage = "?page=";
+      let queryConfig = `SELECT issuesconfig FROM users WHERE userid = $1`;
+      let subqueryTotalData = ` SELECT issueid, subject, tracker
+        FROM issues`;
+      let query = `SELECT issueid, subject, tracker
+        FROM issues`;
+
+      // PAGINATION
+      pagination.currentPage = parseInt(req.query.page ? req.query.page : 1);
+      pagination.offset = (pagination.currentPage - 1) * pagination.perPage;
+
+      // FILTER
+      [queryFilter, args, i] = helper.filterQueryParamIssues(
+        req.query,
+        queryFilter,
+        projectid
+      );
+
+      if (queryFilter) {
+        query += ` WHERE` + queryFilter;
+        subqueryTotalData += ` WHERE` + queryFilter;
+      }
+      let queryTotalData = `SELECT COUNT(*) as totaldata FROM (${subqueryTotalData}) as issues`;
+
+      // Add limit and offset to main query
+      query += ` ORDER BY issueid`;
+      query += ` LIMIT 3 OFFSET $${i + 1}`;
+
+      db.query(queryConfig, [req.session.user.userid], (err, results) => {
+        if (err) {
+          throw err;
+        }
+
+        results.rows[0].issuesconfig.forEach((column) => {
+          switch (column) {
+            case "issueid":
+              config.issueidcolumn = "issueid";
+              break;
+            case "subject":
+              config.subjectcolumn = "subject";
+              break;
+            case "tracker":
+              config.trackercolumn = "tracker";
+              break;
+            default:
+              break;
+          }
+        });
+
+        db.query(queryTotalData, [...args], (err, results) => {
+          if (err) {
+            throw err;
+          }
+          pagination.totalPage = Math.ceil(
+            results.rows[0].totaldata / pagination.perPage
+          );
+
+          db.query(query, [...args, pagination.offset], (err, results) => {
+            if (err) {
+              throw err;
+            }
+
+            const data = results.rows;
+            res.render("projects/issues/list", {
+              title: "PMS Issues",
+              projectid,
+              tabActive,
+              queryParamObj,
+              config,
+              data,
+              pagination,
+              queryPage,
+              queryParam,
+            });
+          });
+        });
+      });
+    }
+  );
+
+  router.post(
+    "/:projectid/issues/option",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = req.params.projectid;
+      let args = [];
+      let query = `UPDATE users SET issuesconfig = $1 WHERE userid = $2`;
+      if (req.body.issueidcolumn) {
+        args.push("issueid");
+      }
+      if (req.body.subjectcolumn) {
+        args.push("subject");
+      }
+      if (req.body.trackercolumn) {
+        args.push("tracker");
+      }
+      db.query(query, [args, req.session.user.userid], (err) => {
+        if (err) {
+          throw err;
+        }
+        res.redirect(`/projects/${projectid}/issues`);
+      });
+    }
+  );
+
+  router.get(
+    "/:projectid/issues/add",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const tabActive = "issues";
+      const projectid = req.params.projectid;
+      let queryUsers = `SELECT userid, firstname FROM users`;
+
+      db.query(queryUsers, [], (err, results) => {
+        if (err) {
+          throw err;
+        }
+
+        const assigneeOptions = [];
+        results.rows.forEach((item) => {
+          assigneeOptions.push({
+            userid: item.userid,
+            firstname: item.firstname,
+          });
+        });
+
+        res.render("projects/issues/add", {
+          title: "Project Issue Add",
+          assigneeOptions,
+          projectid,
+          tabActive,
+        });
+      });
+    }
+  );
+
+  router.post(
+    "/:projectid/issues/add",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = req.params.projectid;
+      let filesReq = [];
+      for (const file in req.files) {
+        let fileItem = req.files[file];
+        fileItem.mv(
+          path.join(__dirname, "..", "/public/images/" + fileItem.name)
+        );
+        let fileObj = {
+          name: fileItem.name,
+          mimetype: fileItem.mimetype,
+          path: "/images/" + fileItem.name,
+        };
+        filesReq.push(JSON.stringify(fileObj));
+      }
+      let filesString = filesReq.join(",");
+
+      let query = `INSERT INTO issues (projectid, tracker, subject, description, status, priority, assignee, startdate, duedate, estimatedtime, done, files, spenttime, author, createddate, updateddate, parenttask)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, array[$12]::json[], $13, $14, $15, $16, $17) RETURNING projectid`;
+      let args = [
+        parseInt(projectid),
+        req.body.tracker,
+        req.body.subject,
+        req.body.description,
+        req.body.status,
+        req.body.priority,
+        req.body.assignee ? parseInt(req.body.assignee) : null,
+        req.body.startdate ? new Date(req.body.startdate) : null,
+        req.body.duedate ? new Date(req.body.duedate) : null,
+        req.body.estimatedtime ? parseFloat(req.body.estimatedtime) : 0,
+        parseInt(req.body.done),
+        filesString ? filesString : null,
+        0,
+        req.session.user.userid,
+        new Date(Date.now() + 1000 * 60 * -new Date().getTimezoneOffset())
+          .toISOString()
+          .replace("T", " ")
+          .replace("Z", ""),
+        new Date(Date.now() + 1000 * 60 * -new Date().getTimezoneOffset())
+          .toISOString()
+          .replace("T", " ")
+          .replace("Z", ""),
+        null,
+      ];
+      db.query(query, [...args], (err, results) => {
+        if (err) {
+          throw err;
+        }
+        let projectid = results.rows[0].projectid;
+        res.redirect(`/projects/${projectid}/issues`);
+      });
+    }
+  );
+
+  router.get(
+    "/:projectid/issues/edit/:issueid",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const tabActive = "issues";
+      const projectid = parseInt(req.params.projectid);
+      const issueid = parseInt(req.params.issueid);
+
+      let queryUsers = `SELECT userid, firstname FROM users`;
+      let queryParentTask = `SELECT issueid, subject FROM issues
+        WHERE issueid <> $1`;
+      let queryIssue = `
+        SELECT 
+          issueid, projectid, tracker, subject, description, status, 
+          priority, assignee, startdate, duedate, estimatedtime, done, 
+          files, spenttime, targetversion, author, createddate, 
+          updateddate, closeddate, parenttask
+        FROM issues
+        WHERE projectid = $1 AND issueid = $2
+      `;
+
+      db.query(queryUsers, [], (err, results) => {
+        if (err) {
+          throw err;
+        }
+
+        const assigneeOptions = [];
+        results.rows.forEach((item) => {
+          assigneeOptions.push({
+            userid: item.userid,
+            firstname: item.firstname,
+          });
+        });
+
+        db.query(queryParentTask, [issueid], (err, results) => {
+          if (err) {
+            throw err;
+          }
+
+          const issueOptions = [];
+          results.rows.forEach((item) => {
+            issueOptions.push({
+              issueid: item.issueid,
+              subject: item.subject,
+            });
+          });
+
+          db.query(queryIssue, [projectid, issueid], (err, results) => {
+            if (err) {
+              throw err;
+            }
+
+            res.render("projects/issues/edit", {
+              title: "PMS Project Issue Edit",
+              issue: results.rows[0],
+              projectid,
+              tabActive,
+              assigneeOptions,
+              issueOptions,
+            });
+          });
+        });
+      });
+    }
+  );
+
+  router.post(
+    "/:projectid/issues/edit/:issueid",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = parseInt(req.params.projectid);
+      const issueid = parseInt(req.params.issueid);
+      const args = [];
+
+      let query = `UPDATE issues SET`;
+
+      if (req.body.tracker) {
+        query += `, tracker = $${args.length + 1}`;
+        args.push(req.body.tracker);
+      }
+      if (req.body.subject) {
+        query += `, subject = $${args.length + 1}`;
+        args.push(req.body.subject);
+      }
+      if (req.body.description) {
+        query += `, description = $${args.length + 1}`;
+        args.push(req.body.description);
+      }
+      if (req.body.status) {
+        query += `, status = $${args.length + 1}`;
+        args.push(req.body.status);
+      }
+      if (req.body.priority) {
+        query += `, priority = $${args.length + 1}`;
+        args.push(req.body.priority);
+      }
+      if (req.body.assignee) {
+        query += `, assignee = $${args.length + 1}`;
+        args.push(parseInt(req.body.assignee));
+      }
+      if (req.body.startdate) {
+        query += `, startdate = $${args.length + 1}`;
+        args.push(new Date(req.body.startdate));
+      }
+      if (req.body.duedate) {
+        query += `, duedate = $${args.length + 1}`;
+        args.push(new Date(req.body.duedate));
+      }
+      if (req.body.spenttime) {
+        query += `, spenttime = $${args.length + 1}`;
+        args.push(parseInt(req.body.spenttime));
+      }
+      if (req.body.targetversion) {
+        query += `, targetversion = $${args.length + 1}`;
+        args.push(req.body.targetversion);
+      }
+      if (req.body.closeddate) {
+        query += `, closeddate = $${args.length + 1}`;
+        args.push(new Date(req.body.closeddate));
+      }
+      if (req.body.parenttask) {
+        query += `, parenttask = $${args.length + 1}`;
+        args.push(parseInt(req.body.parenttask));
+      }
+      if (req.body.done) {
+        query += `, done = $${args.length + 1}`;
+        args.push(parseInt(req.body.done));
+      }
+
+      let filesReq = [];
+      for (const file in req.files) {
+        let fileItem = req.files[file];
+        fileItem.mv(
+          path.join(__dirname, "..", "/public/images/" + fileItem.name)
+        );
+        let fileObj = {
+          name: fileItem.name,
+          mimetype: fileItem.mimetype,
+          path: "/images/" + fileItem.name,
+        };
+        filesReq.push(fileObj);
+      }
+      if (typeof req.body.oldfile == "string") {
+        let [name, mimetype, path] = req.body.oldfile.split(",");
+        let fileObj = {
+          name,
+          mimetype,
+          path,
+        };
+        filesReq.push(fileObj);
+      } else {
+        for (let i = 0; i < req.body.oldfile?.length; i++) {
+          const file = req.body.oldfile[i];
+          let [name, mimetype, path] = file.split(",");
+          let fileObj = {
+            name,
+            mimetype,
+            path,
+          };
+          filesReq.push(fileObj);
+        }
+      }
+      if (filesReq) {
+        query += `, files = $${args.length + 1}`;
+        args.push(filesReq);
+      }
+
+      query += ` WHERE projectid = $${args.length + 1}`;
+      args.push(parseInt(projectid));
+      query += ` AND issueid = $${args.length + 1}`;
+      query += ` RETURNING projectid`;
+      args.push(parseInt(issueid));
+
+      query = query.replace(",", "");
+      db.query(query, [...args], (err, results) => {
+        if (err) {
+          throw err;
+        }
+
+        if (req.body.oldimg) {
+          filePath = path.join(__dirname, "..", "/public" + req.body.oldimg);
+          fs.unlinkSync(filePath);
+        }
+
+        let projectid = results.rows[0].projectid;
+        res.redirect(`/projects/${projectid}/issues`);
+      });
+    }
+  );
+
+  router.get(
+    "/:projectid/issues/delete/:issueid",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = parseInt(req.params.projectid);
+      const issueid = parseInt(req.params.issueid);
+      let query = `DELETE FROM issues WHERE issueid = $1`;
+
+      db.query(query, [issueid], (err, results) => {
+        if (err) {
+          throw err;
+        }
+        res.redirect(`/projects/${projectid}/issues`);
       });
     }
   );
