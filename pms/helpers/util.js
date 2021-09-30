@@ -24,7 +24,7 @@ function filterQueryParamProjects(param, query) {
     for (; i < filters.length; i++) {
       switch (filters[i].name) {
         case "projectid":
-          query += ` AND projectid = $${i + 1}`;
+          query += ` AND projects.projectid = $${i + 1}`;
           args.push(parseInt(param.projectid));
           break;
         case "name":
