@@ -4,39 +4,48 @@
 <body>
   <%- include("../../partials/navbar") -%>
 
-  <div class="container">
-    <h1>Edit Member</h1>
-    <hr>
+  <div class="container p-0" style="max-width: none;">
+    <div class="d-flex" style="height: 100vh;">
+      <%- include("../../partials/sidebar") -%>
+      <div class="pt-3 tab-content w-100" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-members" role="tabpanel" aria-labelledby="v-pills-members-tab">
+          <div class="container ps-0" style="max-width: none;">
+            <h1>Edit Member</h1>
+            <hr>
 
-    <div class="container">
-      <form id="form-edit" action="" method="POST" class="m-auto" style="max-width: 650px;">
-        <div class="row mb-3 align-items-center justify-content-between">
-          <div class="col-auto">
-            <label class="form-check-label" for="member">Member</label>
-          </div>
-          <div class="col-auto w-75">
-            <select disabled id="member" name="member" class="form-select" aria-label="Default select example">
-              <option value="<%= member.userid %>" disabled selected hidden><%= member.firstname %> </option>
-            </select>
+            <div style="max-width: 1200px;">
+              <form id="form-edit" action="" method="POST" class="m-auto" style="max-width: 650px;">
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="member">Member</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select disabled id="member" name="member" class="form-select" aria-label="Default select example">
+                      <option value="<%= member.userid %>" disabled selected hidden><%= member.firstname %> </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 align-items-center justify-content-between">
+                  <div class="col-auto">
+                    <label class="form-check-label" for="position">Position</label>
+                  </div>
+                  <div class="col-auto w-75">
+                    <select id="position" name="position" class="form-select" aria-label="Default select example">
+                      <option value="" disabled selected hidden>Choose the position ...</option>
+                      <option <%= member.role == "Manager" && "selected" %> value="Manager">Manager</option>
+                      <option <%= member.role == "Programmer" && "selected" %> value="Programmer">Programmer</option>
+                      <option <%= member.role == "Quality Assurance" && "selected" %> value="Quality Assurance">Quality Assurance</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Save</button>
+              </form>
+            </div>
           </div>
         </div>
-
-        <div class="row mb-3 align-items-center justify-content-between">
-          <div class="col-auto">
-            <label class="form-check-label" for="position">Position</label>
-          </div>
-          <div class="col-auto w-75">
-            <select id="position" name="position" class="form-select" aria-label="Default select example">
-              <option value="" disabled selected hidden>Choose the position ...</option>
-              <option <%= member.role == "Manager" && "selected" %> value="Manager">Manager</option>
-              <option <%= member.role == "Programmer" && "selected" %> value="Programmer">Programmer</option>
-              <option <%= member.role == "Quality Assurance" && "selected" %> value="Quality Assurance">Quality Assurance</option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Save</button>
-      </form>
+      </div>
     </div>
   </div>
 </body>
