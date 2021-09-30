@@ -17,7 +17,7 @@
       <div class="container filters-container">
         <h2>Filters</h2>
 
-        <form id="form-filter-overview" action="" method="get" class="m-auto mb-3" style="max-width: 500px;">
+        <form id="form-filter-projects" action="" method="get" class="m-auto mb-3" style="max-width: 500px;">
           <input type="hidden" value="1" id="page" name="page" class="form-control">
 
           <div class="row mb-3 align-items-center justify-content-between">
@@ -50,7 +50,7 @@
                 <option value="" disabled selected hidden>Choose the member ...</option>
                 <% for( let i = 0; i < memberOptions.length; i++ ) { %>
 
-                <option <%= memberOptions[i] == queryParamObj.member && "selected" %> value="<%= memberOptions[i] %>"><%= memberOptions[i] %></option>
+                <option <%= memberOptions[i].firstname == queryParamObj.member && "selected" %> value="<%= memberOptions[i].userid %>"><%= memberOptions[i].firstname %></option>
 
                 <% } %>
               </select>
@@ -64,7 +64,7 @@
       <div class="container options-container">
         <h2>Options</h2>
 
-        <form id="form-options-overview" action="/projects/option" method="POST" class="w-75 justify-content-between">
+        <form id="form-options-projects" action="/projects/option" method="POST" class="w-75 justify-content-between">
           <div class="row mb-3 justify-content-between" style="max-width: 310px;">
             <div class="col-auto">
               <p>Columns</p>
