@@ -1,0 +1,23 @@
+<%- include("partials/header") -%>
+</head>
+
+<body class="h-100">
+  <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="error-template d-flex flex-column align-items-center">
+          <h1>Oops!</h1>
+          <h2>Issue Telah Terhapus</h2>
+
+          <div class="error-actions">
+            <a href="/projects/<%= projectid %>/activity" class="btn btn-primary btn-lg">
+              Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<%- include("partials/footer") -%>
