@@ -1,0 +1,38 @@
+<%- include("../../partials/header") -%>
+
+<%- include("../../partials/sidebar-style") -%>
+</head>
+
+<body style="overflow: hidden;">
+  <%- include("../../partials/navbar") -%>
+
+  <div class="container p-0" style="max-width: none;">
+    <div class="d-flex" style="height: 100vh;">
+      <%- include("../../partials/sidebar") -%>
+
+      <div class="pt-3 tab-content w-100" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel" aria-labelledby="v-pills-overview-tab">
+          <div class="container ps-0" style="max-width: none;">
+            <h1>Activity</h1>
+            <hr>
+
+            <div>
+              <div class="issues-container border rounded p-3 mb-5">
+                <p class="m-0">Activity</p>
+                <p class="m-0">From <%= moment(data[0]?.time.setDate(data[0]?.time.getDate() - 7)).format("L") || moment(new Date()).format("L") %> to <%= data[0]?.formattedDate || moment(new Date()).format("L") %> </p>
+                <p class="m-0">Today</p>
+
+                <ul>
+                  <% data.forEach(activity => { %>
+                  <li><%= activity.time.toISOString().slice(11, 16) %> <%= activity.title %> <a href="/projects/<%= projectid %>/issues/edit/<%= activity.issueid %>">#<%= activity.issueid %></a> (<%= activity.status %>): <%= activity.description %>, author: <%= activity.firstname %></li>
+                  <% }) %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<%- include("../../partials/footer") -%>
