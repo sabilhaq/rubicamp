@@ -96,8 +96,8 @@
 
                     <div class="row mb-1 align-items-center justify-content-between">
                       <div class="col-auto">
-                        <input type="radio" <%= issue.status == "In Progress" && "checked" %> class="form-check-input" id="In value" id="In Progress" name="status">
-                        <label class="form-check-label" for="In Progress">In Progress</label>
+                        <input type="radio" <%= issue.status == "In Progress" && "checked" %> class="form-check-input" value="In Progress" id="InProgress" name="status">
+                        <label class="form-check-label" for="InProgress">In Progress</label>
                       </div>
                     </div>
 
@@ -315,13 +315,23 @@
                       <input type="hidden" name="oldfile" value="<%= issue.files[i].name %>,<%= issue.files[i].mimetype %>,<%= issue.files[i].path %>">
 
                       <div class="d-flex">
-                        <% let [fileName, extension] = issue.files[i].name.split(".") %>
-                        <% if ((extension == "jpg") || (extension == "png") || (extension == "svg")) { %>
+                        <% let [fileName, extension] = issue.files[i].name ? issue.files[i].name.split(".") : "" %>
+
+                        <% if (extension) { %>
+
+                        <% if (extension == "jpg" || extension == "png" || extension == "svg") { %>
+
                         <img data-tag="img" data-id="oldimg<%= i %>" style="max-width: 100px;" src="<%= issue.files[i].path %>" alt="tes">
+
                         <% } else { %>
+
                         <a data-tag="a" href="<%= issue.files[i].path %>"><%= issue.files[i].name %> </a>
+
                         <% } %>
                         <button type="button" class="btn btn-outline-danger mx-3 align-self-end delete-old-file">x</button>
+
+                        <% } %>
+
                       </div>
 
                       <% } %>
