@@ -3,6 +3,7 @@ var router = express.Router();
 var helper = require("../helpers/util");
 var path = require("path");
 var fs = require("fs");
+var moment = require("moment");
 
 module.exports = function (db) {
   router.get("/", helper.isLoggedIn, function (req, res, next) {
@@ -105,7 +106,6 @@ module.exports = function (db) {
             }
 
             let queryPage = "?page=";
-            let queryParam = req.url.slice(8);
             let queryParamObj = req.query;
 
             res.render("projects/list", {
@@ -114,7 +114,6 @@ module.exports = function (db) {
               memberOptions,
               queryParamObj,
               pagination,
-              queryParam,
               queryPage,
               config,
             });
@@ -398,7 +397,6 @@ module.exports = function (db) {
     function (req, res, next) {
       // INIT VARIABLES
       const projectid = parseInt(req.params.projectid);
-      const queryParam = req.url.slice(8);
       const tabActive = "members";
       let queryFilter = ``;
       let queryConfig = `SELECT membersconfig FROM users WHERE userid = $1`;
@@ -477,7 +475,6 @@ module.exports = function (db) {
               title: "Project Members",
               data: results.rows,
               queryParamObj,
-              queryParam,
               pagination,
               queryPage,
               projectid,
@@ -643,7 +640,6 @@ module.exports = function (db) {
       // INIT VARIABLES
       const projectid = req.params.projectid;
       const tabActive = "issues";
-      const queryParam = req.url.slice(8);
       const config = {};
       const queryParamObj = req.query;
       const pagination = {
@@ -726,7 +722,6 @@ module.exports = function (db) {
               data,
               pagination,
               queryPage,
-              queryParam,
             });
           });
         });
@@ -806,12 +801,11 @@ module.exports = function (db) {
           mimetype: fileItem.mimetype,
           path: "/images/" + fileItem.name,
         };
-        filesReq.push(JSON.stringify(fileObj));
+        filesReq.push(fileObj);
       }
-      let filesString = filesReq.join(",");
 
       let query = `INSERT INTO issues (projectid, tracker, subject, description, status, priority, assignee, startdate, duedate, estimatedtime, done, files, spenttime, author, createddate, updateddate, parenttask)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, array[$12]::json[], $13, $14, $15, $16, $17) RETURNING projectid`;
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *`;
       let args = [
         parseInt(projectid),
         req.body.tracker,
@@ -824,7 +818,7 @@ module.exports = function (db) {
         req.body.duedate ? new Date(req.body.duedate) : null,
         req.body.estimatedtime ? parseFloat(req.body.estimatedtime) : 0,
         parseInt(req.body.done),
-        filesString ? filesString : null,
+        filesReq ? filesReq : null,
         0,
         req.session.user.userid,
         new Date(Date.now() + 1000 * 60 * -new Date().getTimezoneOffset())
@@ -841,8 +835,29 @@ module.exports = function (db) {
         if (err) {
           throw err;
         }
-        let projectid = results.rows[0].projectid;
-        res.redirect(`/projects/${projectid}/issues`);
+
+        let queryAddActivity = `
+          INSERT INTO activity 
+            (time, title, description, author, issueid, projectid)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING projectid
+        `;
+
+        let args = [];
+        args.push(results.rows[0].createddate);
+        args.push(results.rows[0].subject);
+        args.push(results.rows[0].description);
+        args.push(results.rows[0].author);
+        args.push(results.rows[0].issueid);
+        args.push(results.rows[0].projectid);
+
+        db.query(queryAddActivity, [...args], (err, results) => {
+          if (err) {
+            throw err;
+          }
+          let projectid = results.rows[0].projectid;
+          res.redirect(`/projects/${projectid}/issues`);
+        });
       });
     }
   );
@@ -899,14 +914,21 @@ module.exports = function (db) {
               throw err;
             }
 
-            res.render("projects/issues/edit", {
-              title: "PMS Project Issue Edit",
-              issue: results.rows[0],
-              projectid,
-              tabActive,
-              assigneeOptions,
-              issueOptions,
-            });
+            if (results.rows.length == 0) {
+              res.render("notfound", {
+                title: "404 Not Found",
+                projectid,
+              });
+            } else {
+              res.render("projects/issues/edit", {
+                title: "PMS Project Issue Edit",
+                issue: results.rows[0],
+                projectid,
+                tabActive,
+                assigneeOptions,
+                issueOptions,
+              });
+            }
           });
         });
       });
@@ -957,12 +979,23 @@ module.exports = function (db) {
       }
       if (req.body.spenttime) {
         query += `, spenttime = $${args.length + 1}`;
-        args.push(parseInt(req.body.spenttime));
+        args.push(parseFloat(req.body.spenttime));
+      }
+      if (req.body.estimatedtime) {
+        query += `, estimatedtime = $${args.length + 1}`;
+        args.push(parseFloat(req.body.estimatedtime));
       }
       if (req.body.targetversion) {
         query += `, targetversion = $${args.length + 1}`;
         args.push(req.body.targetversion);
       }
+      query += `, updateddate = $${args.length + 1}`;
+      args.push(
+        new Date(Date.now() + 1000 * 60 * -new Date().getTimezoneOffset())
+          .toISOString()
+          .replace("T", " ")
+          .replace("Z", "")
+      );
       if (req.body.closeddate) {
         query += `, closeddate = $${args.length + 1}`;
         args.push(new Date(req.body.closeddate));
@@ -1017,7 +1050,7 @@ module.exports = function (db) {
       query += ` WHERE projectid = $${args.length + 1}`;
       args.push(parseInt(projectid));
       query += ` AND issueid = $${args.length + 1}`;
-      query += ` RETURNING projectid`;
+      query += ` RETURNING *`;
       args.push(parseInt(issueid));
 
       query = query.replace(",", "");
@@ -1031,8 +1064,28 @@ module.exports = function (db) {
           fs.unlinkSync(filePath);
         }
 
-        let projectid = results.rows[0].projectid;
-        res.redirect(`/projects/${projectid}/issues`);
+        let queryAddActivity = `
+          INSERT INTO activity 
+            (time, title, description, author, issueid, projectid)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING projectid
+        `;
+
+        let args = [];
+        args.push(results.rows[0].updateddate);
+        args.push(results.rows[0].subject);
+        args.push(results.rows[0].description);
+        args.push(results.rows[0].author);
+        args.push(results.rows[0].issueid);
+        args.push(results.rows[0].projectid);
+
+        db.query(queryAddActivity, [...args], (err, results) => {
+          if (err) {
+            throw err;
+          }
+          let projectid = results.rows[0].projectid;
+          res.redirect(`/projects/${projectid}/issues`);
+        });
       });
     }
   );
@@ -1043,13 +1096,86 @@ module.exports = function (db) {
     function (req, res, next) {
       const projectid = parseInt(req.params.projectid);
       const issueid = parseInt(req.params.issueid);
-      let query = `DELETE FROM issues WHERE issueid = $1`;
+      let query = `DELETE FROM issues WHERE issueid = $1 RETURNING *`;
 
       db.query(query, [issueid], (err, results) => {
         if (err) {
           throw err;
         }
-        res.redirect(`/projects/${projectid}/issues`);
+
+        let queryAddActivity = `
+          INSERT INTO activity 
+            (time, title, description, author, issueid, projectid)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING projectid
+        `;
+
+        let args = [];
+        args.push(
+          new Date(Date.now() + 1000 * 60 * -new Date().getTimezoneOffset())
+            .toISOString()
+            .replace("T", " ")
+            .replace("Z", "")
+        );
+        args.push(results.rows[0].subject);
+        args.push(results.rows[0].description);
+        args.push(results.rows[0].author);
+        args.push(results.rows[0].issueid);
+        args.push(results.rows[0].projectid);
+
+        db.query(queryAddActivity, [...args], (err, results) => {
+          if (err) {
+            throw err;
+          }
+
+          const projectid = parseInt(results.rows[0].projectid);
+          res.redirect(`/projects/${projectid}/issues`);
+        });
+      });
+    }
+  );
+
+  // Activity
+  router.get(
+    "/:projectid/activity",
+    helper.isLoggedIn,
+    function (req, res, next) {
+      const projectid = parseInt(req.params.projectid);
+      const tabActive = "activity";
+      let queryActivity = `SELECT activity.activityid, time, title, 
+        activity.issueid, issues.status, activity.description, 
+        activity.author, firstname
+      FROM activity
+      LEFT JOIN users ON users.userid = activity.author
+      LEFT JOIN issues ON issues.issueid = activity.issueid
+      WHERE activity.projectid = $1
+        AND date_trunc('day', activity.time) = date_trunc('day', current_date)
+        ORDER BY activity.time
+        `;
+
+      db.query(queryActivity, [projectid], (err, results) => {
+        if (err) {
+          throw err;
+        }
+
+        if (results.rows.length > 0) {
+          const projectid = results.rows[0].projectid;
+        }
+
+        results.rows.forEach((activity, index) => {
+          results.rows[index].formattedDate = moment(activity.time).format("L");
+          results.rows[index].time.setHours(
+            results.rows[index].time.getHours() + 7
+          );
+        });
+
+        res.render("projects/activity/view", {
+          title: "Project Activity",
+          tabActive,
+          projectid,
+          data: results.rows,
+          moment,
+        });
       });
     }
   );
