@@ -25,7 +25,7 @@ module.exports = function (db) {
     pagination.offset = (pagination.currentPage - 1) * pagination.perPage;
 
     // FILTER
-    [queryFilter, args, i] = helper.filterQueryParamProjects(
+    [filters, queryFilter, args, i] = helper.filterQueryParamProjects(
       req.query,
       queryFilter
     );
@@ -51,8 +51,25 @@ module.exports = function (db) {
       FROM (${subquery}) as projectmember
     `;
 
-    // Add limit and offset to main query
-    query += ` LIMIT 3 OFFSET $${i + 1}`;
+    if (req.query.sort) {
+      switch (req.query.order) {
+        case "asc":
+          query += ` ORDER BY ${req.query.sort} desc LIMIT 3 OFFSET $${i + 1}`;
+          req.query.order = "desc";
+          break;
+        case "desc":
+          query += ` ORDER BY projectid LIMIT 3 OFFSET $${i + 1}`;
+          req.query.order = "";
+          break;
+        default:
+          query += ` ORDER BY ${req.query.sort} asc LIMIT 3 OFFSET $${i + 1}`;
+          req.query.order = "asc";
+          break;
+      }
+    } else {
+      query += ` ORDER BY projectid LIMIT 3 OFFSET $${i + 1}`;
+    }
+
 
     // Check total all data filterd for pagination.totalpage
     db.query(queryConfig, [req.session.user.userid], (err, results) => {
@@ -107,15 +124,25 @@ module.exports = function (db) {
 
             let queryPage = "?page=";
             let queryParamObj = req.query;
+            let stringParam = req.url.slice(2);
+
 
             res.render("projects/list", {
               title: "PMS Projects",
+              userrole: req.session.user.role,
+              nav: "projects",
               data: results.rows,
               memberOptions,
               queryParamObj,
               pagination,
               queryPage,
               config,
+              filters,
+              queryParams: req.url,
+              helper,
+              order: req.query.order,
+              sort: req.query.sort,
+              stringParam,
             });
           });
         });
@@ -156,7 +183,12 @@ module.exports = function (db) {
         memberOptions.push({ userid: item.userid, firstname: item.firstname });
       });
 
-      res.render("projects/add", { title: "PMS Projects Form", memberOptions });
+      res.render("projects/add", {
+        title: "PMS Projects Form",
+        userrole: req.session.user.role,
+        nav: "projects",
+        memberOptions,
+      });
     });
   });
 
@@ -232,6 +264,8 @@ module.exports = function (db) {
 
         res.render("projects/edit", {
           title: "PMS Projects Form",
+          userrole: req.session.user.role,
+          nav: "projects",
           project: results.rows[0],
           memberOptions,
         });
@@ -291,13 +325,19 @@ module.exports = function (db) {
 
   router.get("/delete/:id", helper.isLoggedIn, function (req, res, next) {
     const id = parseInt(req.params.id);
-    let query = `DELETE FROM projects WHERE projectid = $1`;
-    db.query(query, [id], (err, results) => {
-      if (err) {
-        throw err;
-      }
-      res.redirect("/projects");
-    });
+    if (req.session.user.role == "admin") {
+      let query = `DELETE FROM projects WHERE projectid = $1`;
+      db.query(query, [id], (err, results) => {
+        if (err) {
+          throw err;
+        }
+        res.redirect("/projects");
+      });
+    } else {
+      res.render("error/forbidden", {
+        title: "403 Forbidden",
+      });
+    }
   });
 
   // Overview
@@ -373,6 +413,8 @@ module.exports = function (db) {
 
             res.render("projects/overview/view", {
               title: "Project Overview",
+              userrole: req.session.user.role,
+              nav: "projects",
               tabActive,
               projectid,
               projectName,
@@ -402,10 +444,10 @@ module.exports = function (db) {
       let queryConfig = `SELECT membersconfig FROM users WHERE userid = $1`;
       let queryParamObj = req.query;
       let queryPage = "?page=";
-      let subqueryTotalData = `SELECT members.userid, firstname, role 
+      let subqueryTotalData = `SELECT members.userid, firstname, members.role 
         FROM members
         LEFT JOIN users ON users.userid = members.userid`;
-      let query = `SELECT members.userid, firstname, role FROM members
+      let query = `SELECT members.userid, firstname, members.role FROM members
         LEFT JOIN users ON users.userid = members.userid`;
       let config = {};
       let pagination = {
@@ -473,6 +515,8 @@ module.exports = function (db) {
 
             res.render("projects/members/list", {
               title: "Project Members",
+              userrole: req.session.user.role,
+              nav: "projects",
               data: results.rows,
               queryParamObj,
               pagination,
@@ -532,6 +576,8 @@ module.exports = function (db) {
 
         res.render("projects/members/add", {
           title: "Project Member Add",
+          userrole: req.session.user.role,
+          nav: "projects",
           memberOptions: results.rows,
           projectid,
           tabActive,
@@ -582,6 +628,8 @@ module.exports = function (db) {
 
         res.render("projects/members/edit", {
           title: "PMS Project Member Edit",
+          userrole: req.session.user.role,
+          nav: "projects",
           member: results.rows[0],
           projectid,
           tabActive,
@@ -652,10 +700,26 @@ module.exports = function (db) {
       let queryFilter = "";
       let queryPage = "?page=";
       let queryConfig = `SELECT issuesconfig FROM users WHERE userid = $1`;
-      let subqueryTotalData = ` SELECT issueid, subject, tracker
-        FROM issues`;
-      let query = `SELECT issueid, subject, tracker
-        FROM issues`;
+      let subqueryTotalData = ` SELECT issueid, subject, tracker,
+          status, priority, users.firstname, description, startdate,
+          duedate, estimatedtime, spenttime, targetversion, 
+          users.firstname, createddate, updateddate, closeddate,
+          parenttask, done
+        FROM issues
+        LEFT JOIN users ON users.userid = issues.assignee
+      `;
+
+      let query = `
+      SELECT issues.issueid, issues.subject, issues.tracker,
+        issues.status, issues.priority, assignee.firstname as assignee, issues.description, issues.startdate,
+        issues.duedate, issues.estimatedtime, issues.spenttime, issues.targetversion, 
+        author.firstname as author, issues.createddate, issues.updateddate, issues.closeddate,
+        parenttask.subject as parenttask, issues.done
+      FROM issues
+      LEFT JOIN users assignee ON assignee.userid = issues.assignee
+      LEFT JOIN users author ON author.userid = issues.author
+      LEFT JOIN issues parenttask ON parenttask.issueid = issues.parenttask	
+      `;
 
       // PAGINATION
       pagination.currentPage = parseInt(req.query.page ? req.query.page : 1);
@@ -675,7 +739,7 @@ module.exports = function (db) {
       let queryTotalData = `SELECT COUNT(*) as totaldata FROM (${subqueryTotalData}) as issues`;
 
       // Add limit and offset to main query
-      query += ` ORDER BY issueid`;
+      query += ` ORDER BY issues.issueid`;
       query += ` LIMIT 3 OFFSET $${i + 1}`;
 
       db.query(queryConfig, [req.session.user.userid], (err, results) => {
@@ -712,14 +776,20 @@ module.exports = function (db) {
               throw err;
             }
 
-            const data = results.rows;
+            results.rows.forEach((issue) => {
+              issue.startdate = issue.startdate?.toISOString().slice(0, 10);
+              issue.duedate = issue.duedate?.toISOString().slice(0, 10);
+            });
+
             res.render("projects/issues/list", {
               title: "PMS Issues",
+              userrole: req.session.user.role,
+              nav: "projects",
               projectid,
               tabActive,
               queryParamObj,
               config,
-              data,
+              data: results.rows,
               pagination,
               queryPage,
             });
@@ -777,6 +847,8 @@ module.exports = function (db) {
 
         res.render("projects/issues/add", {
           title: "Project Issue Add",
+          userrole: req.session.user.role,
+          nav: "projects",
           assigneeOptions,
           projectid,
           tabActive,
@@ -915,13 +987,15 @@ module.exports = function (db) {
             }
 
             if (results.rows.length == 0) {
-              res.render("notfound", {
+              res.render("error/notfound", {
                 title: "404 Not Found",
                 projectid,
               });
             } else {
               res.render("projects/issues/edit", {
                 title: "PMS Project Issue Edit",
+                userrole: req.session.user.role,
+                nav: "projects",
                 issue: results.rows[0],
                 projectid,
                 tabActive,
@@ -1022,6 +1096,7 @@ module.exports = function (db) {
         };
         filesReq.push(fileObj);
       }
+      // old file
       if (typeof req.body.oldfile == "string") {
         let [name, mimetype, path] = req.body.oldfile.split(",");
         let fileObj = {
@@ -1059,9 +1134,16 @@ module.exports = function (db) {
           throw err;
         }
 
-        if (req.body.oldimg) {
-          filePath = path.join(__dirname, "..", "/public" + req.body.oldimg);
+        if (typeof req.body.oldfiledeleted == "string") {
+          let [name, mimetype, filepath] = req.body.oldfiledeleted.split(",");
+          filePath = path.join(__dirname, "..", "/public" + filepath);
           fs.unlinkSync(filePath);
+        } else {
+          for (let i = 0; i < req.body.oldfiledeleted?.length; i++) {
+            let [name, mimetype, filepath] = req.body.oldfiledeleted[i].split(",");
+            filePath = path.join(__dirname, "..", "/public" + filepath);
+            fs.unlinkSync(filePath);
+          }
         }
 
         let queryAddActivity = `
@@ -1171,6 +1253,8 @@ module.exports = function (db) {
 
         res.render("projects/activity/view", {
           title: "Project Activity",
+          userrole: req.session.user.role,
+          nav: "projects",
           tabActive,
           projectid,
           data: results.rows,
