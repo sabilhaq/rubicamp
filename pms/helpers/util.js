@@ -6,6 +6,58 @@ function isLoggedIn(req, res, next) {
   }
 }
 
+function filterQueryParamUsers(param, query) {
+  let i = 0;
+  let filters = [];
+  let args = [];
+  if (param.useridcheck && param.userid) {
+    filters.push({ name: "userid", value: parseInt(param.userid) });
+  }
+  if (param.firstnamecheck && param.firstname) {
+    filters.push({ name: "firstname", value: param.firstname });
+  }
+  if (param.lastnamecheck && param.lastname) {
+    filters.push({ name: "lastname", value: param.lastname });
+  }
+  if (param.rolecheck && param.role) {
+    filters.push({ name: "role", value: param.role });
+  }
+  if (param.positioncheck && param.position) {
+    filters.push({ name: "position", value: param.position });
+  }
+
+  if (filters.length > 0) {
+    for (; i < filters.length; i++) {
+      switch (filters[i].name) {
+        case "userid":
+          query += ` AND users.userid = $${i + 1}`;
+          args.push(parseInt(param.userid));
+          break;
+        case "firstname":
+          query += ` AND firstname LIKE $${i + 1}`;
+          args.push("%" + param.firstname + "%");
+          break;
+        case "lastname":
+          query += ` AND lastname LIKE $${i + 1}`;
+          args.push("%" + param.lastname + "%");
+          break;
+        case "role":
+          query += ` AND role = $${i + 1}`;
+          args.push(param.role);
+          break;
+        case "position":
+          query += ` AND position = $${i + 1}`;
+          args.push(param.position);
+          break;
+        default:
+          break;
+      }
+    }
+    query = query.replace(" AND", "");
+  }
+  return [query, args, i];
+}
+
 function filterQueryParamProjects(param, query) {
   let i = 0;
   let filters = [];
@@ -43,7 +95,7 @@ function filterQueryParamProjects(param, query) {
     }
     query = query.replace(" AND", "");
   }
-  return [query, args, i];
+  return [filters, query, args, i];
 }
 
 function filterQueryParamMembers(param, query, projectid) {
@@ -75,7 +127,7 @@ function filterQueryParamMembers(param, query, projectid) {
           args.push("%" + param.firstname + "%");
           break;
         case "position":
-          query += ` AND role = $${i + 1}`;
+          query += ` AND members.role = $${i + 1}`;
           args.push(param.position);
           break;
         default:
@@ -110,19 +162,19 @@ function filterQueryParamIssues(param, query, projectid) {
     for (; i < filters.length; i++) {
       switch (filters[i].name) {
         case "issueid":
-          query += ` AND issueid = $${i + 1}`;
+          query += ` AND issues.issueid = $${i + 1}`;
           args.push(parseInt(param.issueid));
           break;
         case "subject":
-          query += ` AND subject LIKE $${i + 1}`;
+          query += ` AND issues.subject LIKE $${i + 1}`;
           args.push("%" + param.subject + "%");
           break;
         case "tracker":
-          query += ` AND tracker = $${i + 1}`;
+          query += ` AND issues.tracker = $${i + 1}`;
           args.push(param.tracker);
           break;
         default:
-          query += ` AND projectid = $${i + 1}`;
+          query += ` AND issues.projectid = $${i + 1}`;
           args.push(projectid);
           break;
       }
@@ -132,9 +184,36 @@ function filterQueryParamIssues(param, query, projectid) {
   return [query, args, i];
 }
 
+function formatPage(filters, i, queryParams) {
+  let filter = `${param?.filter ? param?.filter : ""}`;
+  let page = `${param?.pageNext ? "&page=" + param.pageNext : ""}`;
+  let sortBy = `${param?.sortBy ? "&sort=" + param?.sortBy : ""}`;
+  let sortOrder = `${param?.sortOrder ? "&order=" + param?.sortOrder : ""}`;
+
+  let allQueryParams = filter + page + sortBy + sortOrder;
+  allQueryParams = allQueryParams.replace(/\?/g, "&");
+  allQueryParams = allQueryParams.replace("&", "?");
+
+  let url = `http://localhost:3000/types${allQueryParams}`;
+
+  if (filters.length == 0) {
+    return `?page=${i}`;
+  } else {
+    arrQueryParams = queryParams.split("&");
+    let formatedQueryParams = "";
+    if (arrQueryParams[arrQueryParams.length - 1].search("page") != -1) {
+      arrQueryParams.pop();
+    }
+    formatedQueryParams = arrQueryParams.join("&");
+    return formatedQueryParams.concat(`&page=${i}`);
+  }
+}
+
 module.exports = {
   isLoggedIn,
+  filterQueryParamUsers,
   filterQueryParamProjects,
   filterQueryParamMembers,
   filterQueryParamIssues,
+  formatPage,
 };
