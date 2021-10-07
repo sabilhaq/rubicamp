@@ -1,5 +1,11 @@
 <%- include("../../partials/header") -%>
 <%- include("../../partials/sidebar-style") -%>
+<style>
+  .table th,
+  td {
+    border-top: 1px solid #ddd;
+  }
+</style>
 </head>
 
 <body style="overflow: hidden;">
@@ -55,6 +61,7 @@
                 </div>
 
                 <button class="btn btn-primary" type="submit">Search</button>
+                <button id="btn-reset" data-projectid="<%= projectid %>" class="btn btn-secondary">Reset</button>
               </form>
             </div>
 
@@ -95,47 +102,80 @@
             </div>
 
             <div class="table-container mt-3">
-              <table id="table-issues-pms" class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <% if (config.issueidcolumn) { %>
-                    <th>#</th>
-                    <% } %>
-                    <% if (config.subjectcolumn) { %>
-                    <th>Subject</th>
-                    <% } %>
-                    <% if (config.trackercolumn) { %>
-                    <th>Tracker</th>
-                    <% } %>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
+              <div style="overflow: auto; white-space: nowrap;">
+                <table id="table-issues-pms" class="table table-striped table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <% if (config.issueidcolumn) { %>
+                      <th>#</th>
+                      <% } %>
+                      <% if (config.subjectcolumn) { %>
+                      <th>Subject</th>
+                      <% } %>
+                      <% if (config.trackercolumn) { %>
+                      <th>Tracker</th>
+                      <% } %>
 
-                <tbody>
-                  <% for( let i = 0; i < data.length; i++ ) { %>
+                      <th>Status</th>
+                      <th>Priority</th>
+                      <th>Assignee</th>
+                      <th>Description</th>
+                      <th>Start Date</th>
+                      <th>Due Date</th>
+                      <th>Estimated Time</th>
+                      <th>Spent Time</th>
+                      <th>Target Version</th>
+                      <th>Author</th>
+                      <th>Created Date</th>
+                      <th>Updated Date</th>
+                      <th>Closed Date</th>
+                      <th>Parent Task</th>
+                      <th>Done</th>
 
-                  <tr>
-                    <% if (config.issueidcolumn) { %>
-                    <td>
-                      <a href="/projects/issues/<%= data[i].issueid %>"><%= data[i].issueid %></a>
-                    </td>
-                    <% } %>
-                    <% if (config.subjectcolumn) { %>
-                    <td><%= data[i].subject %></td>
-                    <% } %>
-                    <% if (config.trackercolumn) { %>
-                    <td><%= data[i].tracker && data[i].tracker[0].toUpperCase() + data[i].tracker.substring(1) %></td>
-                    <% } %>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
 
-                    <td>
-                      <a href="/projects/<%= projectid %>/issues/edit/<%= data[i].issueid %>" class="btn btn-success" role="button">Edit</a>
-                      <a href="/projects/<%= projectid %>/issues/delete/<%= data[i].issueid %>" class="btn btn-danger btn-delete" role="button">Delete</a>
-                    </td>
-                  </tr>
+                  <tbody>
+                    <% data.forEach(issue => { %>
 
-                  <% } %>
-                </tbody>
-              </table>
+                    <tr>
+                      <% if (config.issueidcolumn) { %>
+                      <td><%= issue.issueid %></td>
+                      <% } %>
+                      <% if (config.subjectcolumn) { %>
+                      <td><%= issue.subject %></td>
+                      <% } %>
+                      <% if (config.trackercolumn) { %>
+                      <td><%= issue.tracker && issue.tracker[0].toUpperCase() + issue.tracker.substring(1) %></td>
+                      <% } %>
+
+                      <td><%= issue.status %></td>
+                      <td><%= issue.priority %></td>
+                      <td><%= issue.assignee %></td>
+                      <td><%= issue.description %></td>
+                      <td><%= issue.startdate %></td>
+                      <td><%= issue.duedate %></td>
+                      <td><%= issue.estimatedtime %></td>
+                      <td><%= issue.spenttime %></td>
+                      <td><%= issue.targetversion %></td>
+                      <td><%= issue.author %></td>
+                      <td><%= issue.createddate?.toLocaleString() %></td>
+                      <td><%= issue.updateddate?.toLocaleString() %></td>
+                      <td><%= issue.closeddate?.toLocaleString() %></td>
+                      <td><%= issue.parenttask %></td>
+                      <td><%= issue.done %></td>
+
+                      <td>
+                        <a href="/projects/<%= projectid %>/issues/edit/<%= issue.issueid %>" class="btn btn-success" role="button">Edit</a>
+                        <a href="/projects/<%= projectid %>/issues/delete/<%= issue.issueid %>" class="btn btn-danger btn-delete" role="button">Delete</a>
+                      </td>
+                    </tr>
+
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
 
               <nav aria-label="...">
                 <ul id="pagination-pms" class="pagination">
@@ -164,5 +204,13 @@
       </div>
     </div>
   </div>
+
+  <script>
+    $("#btn-reset").click(function(event) {
+      event.preventDefault()
+      const projectid = $(this).attr("data-projectid")
+      window.location.href = `/projects/${projectid}/issues`
+    })
+  </script>
 </body>
 <%- include("../../partials/footer") -%>

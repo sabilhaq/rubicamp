@@ -1,5 +1,11 @@
 <%- include("../../partials/header") -%>
 <%- include("../../partials/sidebar-style") -%>
+<style>
+  .table th,
+  td {
+    border-top: 1px solid #ddd;
+  }
+</style>
 </head>
 
 <body style="overflow: hidden;">
@@ -58,6 +64,7 @@
                   </div>
 
                   <button class="btn btn-primary" type="submit">Search</button>
+                  <button id="btn-reset" data-projectid="<%= projectid %>" class="btn btn-secondary">Reset</button>
                 </form>
               </div>
 
@@ -141,7 +148,7 @@
                 </table>
 
                 <nav aria-label="...">
-                  <ul id="pagination-pms" class="pagination">
+                  <ul id="pagination-project-members" class="pagination">
 
                     <li class="page-item <%= pagination.currentPage == 1 || !pagination.currentPage ? "disabled" : "" %>">
                       <a href="<%= "/projects/" + projectid + "/members" + queryPage + (pagination.currentPage-1) %>" class="page-link">Previous</a>
@@ -169,5 +176,12 @@
     </div>
   </div>
 
+  <script>
+    $("#btn-reset").click(function(event) {
+      event.preventDefault()
+      const projectid = $(this).attr("data-projectid")
+      window.location.href = `/projects/${projectid}/members`
+    })
+  </script>
 </body>
 <%- include("../../partials/footer") -%>
