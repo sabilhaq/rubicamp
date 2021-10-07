@@ -4,6 +4,8 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var session = require("express-session");
+var flash = require("connect-flash");
+
 const fileUpload = require("express-fileupload");
 
 const { Pool } = require("pg");
@@ -42,6 +44,7 @@ app.use(
 );
 // enable files upload
 app.use(fileUpload());
+app.use(flash());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

@@ -7,7 +7,7 @@
 <body class="text-center">
   <main class="form-signin">
     <form id="login-form" action="/auth" method="POST">
-      <h1 class="h1 mb-3 fw-normal">Project Management System</h1>
+      <h1 class="h1 mb-3 fw-normal"><%= title %></h1>
 
       <div class="form-floating">
         <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
@@ -24,7 +24,32 @@
         </label>
       </div>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+
+      <% if (loginInfo.length > 0) { %>
+      <div style="text-align: left;" id="flash-messages" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= loginInfo %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% } %>
     </form>
   </main>
 
-  <%- include("./partials/footer") -%>
+  <script>
+    $(function() {
+      let flashDurationInSeconds = 2;
+      let flashContainerId = 'flash-messages';
+
+      function removeFlashMessages() {
+        $('#' + flashContainerId).remove()
+      }
+
+      setTimeout(removeFlashMessages, flashDurationInSeconds * 1000)
+    })
+
+    $(".btn-close").on('click', function() {
+      $("#flash-messages").css("display", "none")
+    })
+  </script>
+</body>
+
+<%- include("./partials/footer") -%>
