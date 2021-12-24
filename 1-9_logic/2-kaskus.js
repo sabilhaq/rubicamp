@@ -3,11 +3,11 @@ function deretKaskus(n) {
   const length = n * 3;
   for (let i = 3; i <= length; i += 3) {
     if (i % 5 == 0 && i % 6 == 0) {
-      result.push("KASKUS");
+      result.push('KASKUS');
     } else if (i % 5 == 0) {
-      result.push("KAS");
+      result.push('KAS');
     } else if (i % 6 == 0) {
-      result.push("KUS");
+      result.push('KUS');
     } else {
       result.push(i);
     }
