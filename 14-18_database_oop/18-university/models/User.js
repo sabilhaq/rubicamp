@@ -12,4 +12,14 @@ export default class User {
       }
     );
   }
+
+  getUserByCredential(username, password, next) {
+    this.db.all(
+      `SELECT * FROM users WHERE username=? AND password=?`,
+      [username, password],
+      (err, rows) => {
+        next(err, rows);
+      }
+    );
+  }
 }

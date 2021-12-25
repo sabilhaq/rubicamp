@@ -34,7 +34,12 @@ class MesinHitung {
   result() {
     console.log(this.x);
   }
+  // revisi
+  // pakai static method untuk si Pi
 }
 
 export default MesinHitung;
 export const Pi = Math.PI;
+
+// export function sum (x, y) { return x + y}
+// export var pi = math.pi

@@ -30,26 +30,57 @@ export default class UniversityController {
 
   start() {
     this.mainView.header();
-    this.askUsername();
+    this.askCredential();
   }
 
-  askUsername() {
+  askCredential() {
     this.rl.question("username:", (username) => {
-      this.user.getUserByUsername(username, (err, users) => {
-        if (err) {
-          console.log("users: ", users, err);
-          console.log("terjadi kesalahan, silakan coba lagi");
-          this.askUsername();
-        } else if (users.length == 0) {
-          console.log("username tidak terdaftar");
-          console.log("======================================================");
-          this.askUsername();
-        } else {
-          this.askPassword(users[0]);
-        }
+      this.rl.question("password:", (password) => {
+        this.user.getUserByCredential(username, password, (err, users) => {
+          if (err) {
+            // console.log("users: ", users, err);
+            console.log("terjadi kesalahan, silakan coba lagi");
+            this.askCredential();
+          } else if (users.length == 0) {
+            console.log("user tidak terdaftar");
+            console.log(
+              "======================================================"
+            );
+            this.askCredential();
+          } else {
+            // this.askPassword(users[0]);
+            this.mainMenu(users[0]);
+          }
+        });
+
+        // if (user.password == password) {
+        //   this.mainMenu(user);
+        // } else {
+        //   console.log("password salah, silakan coba lagi");
+        //   console.log("======================================================");
+        //   this.askCredential();
+        // }
       });
     });
   }
+
+  // askCredential() {
+  //   this.rl.question("username:", (username) => {
+  //     this.user.getUserByUsername(username, (err, users) => {
+  //       if (err) {
+  //         console.log("users: ", users, err);
+  //         console.log("terjadi kesalahan, silakan coba lagi");
+  //         this.askCredential();
+  //       } else if (users.length == 0) {
+  //         console.log("username tidak terdaftar");
+  //         console.log("======================================================");
+  //         this.askCredential();
+  //       } else {
+  //         this.askPassword(users[0]);
+  //       }
+  //     });
+  //   });
+  // }
 
   askPassword(user) {
     this.rl.question("password:", (password) => {
@@ -58,7 +89,7 @@ export default class UniversityController {
       } else {
         console.log("password salah, silakan coba lagi");
         console.log("======================================================");
-        this.askUsername();
+        this.askCredential();
       }
     });
   }
@@ -84,7 +115,7 @@ export default class UniversityController {
           break;
         case "6":
           this.mainView.footer();
-          this.askUsername();
+          this.askCredential();
           break;
 
         default:
