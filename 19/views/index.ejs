@@ -1,149 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('partials/header') -%>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data</title>
-  <link rel="stylesheet" href="/css/index.css">
-</head>
-
-<body>
-  <div class="container">
-    <h1>BREAD (Browse, Read, Edit, Add, Delete)</h1>
-    <section class="container__filter">
-
-      <form action="" method="get">
-        <div class="container__row">
-          <div class="container__row__check">
-            <input type="checkbox" name="stringCheck" id="stringCheck">
-          </div>
-          <div class="container__row__label">
-            <label for="string">String</label>
-          </div>
-          <div class="container__row__input">
-            <input id="stringinput" type="search" name="string" value="" placeholder="String">
-          </div>
-        </div>
-        <div class="container__row">
-          <div class="container__row__check">
-            <input type="checkbox" name="integerCheck" id="integerCheck">
-          </div>
-          <div class="container__row__label">
-            <label for="integer">Integer</label>
-          </div>
-          <div class="container__row__input">
-            <input id="integerinput" type="number" name="integer" placeholder="Integer">
-          </div>
-        </div>
-        <div class="container__row">
-          <div class="container__row__check">
-            <input type="checkbox" name="floatCheck" id="floatCheck">
-          </div>
-          <div class="container__row__label">
-            <label for="float">Float</label>
-          </div>
-          <div class="container__row__input">
-            <input id="floatinput" type="number" step="any" name="float" placeholder="Float">
-          </div>
-        </div>
-        <div style="margin: 0px;" class="container__row">
-          <div class="container__row__check">
-            <input type="checkbox" name="dateCheck" id="dateCheck">
-          </div>
-          <div class="container__row__label">
-            <label for="startdate">Date</label>
-          </div>
-          <div class="container__row__input">
-            <input id="startdateinput" type="date" name="startdate" placeholder="start date">
-          </div>
-        </div>
-        <div class="container__row">
-          <div class="container__row__check">
-            <div style="width: 20px;"></div>
-          </div>
-          <div class="container__row__label">
-            <label for="date"></label>
-          </div>
-          <div class="container__row__input">
-            <div>to</div>
-            <input id="enddateinput" type="date" name="enddate" placeholder="end date">
-          </div>
-        </div>
-        <div class="container__row">
-          <div class="container__row__check">
-            <input type="checkbox" name="booleanCheck" id="booleanCheck">
-          </div>
-          <div class="container__row__label">
-            <label for="boolean">Boolean</label>
-          </div>
-          <div class="container__row__input">
-            <select id="booleaninput" name="boolean" id="boolean">
-              <option value="" disabled selected hidden>Choose the boolean ...</option>
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          </div>
-        </div>
-        <div class="container__row">
-          <button type="submit" class="container__row__button button">Search</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="container__table">
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>String</th>
-            <th>Integer</th>
-            <th>Float</th>
-            <th>Date</th>
-            <th>Boolean</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% for( let i = pagination.offset; (i < pagination.offset + pagination.perPage) && (i < data.length); i++ ) { %>
-
-          <tr>
-            <td><%= i + 1 %> </td>
-            <td><%= data[i].string %> </td>
-            <td><%= data[i].integer %> </td>
-            <td><%= data[i].float %> </td>
-            <td><%= data[i].date ? helper.viewDate(data[i].date) : "kosong" %> </td>
-            <td><%= data[i].boolean %> </td>
-            <td>
-              <a href="/edit/<%= i %>">
-                <button class="button edit">Edit</button>
-              </a>
-              <a href="/delete/<%= i %>">
-                <button class="button delete">Delete</button>
-              </a>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
-
-      <div class="pagination">
-        <a href="<%= helper.page(filters, pagination.currentPage - 1, queryParams) %>" style=<%= pagination.currentPage == 1 || !pagination.currentPage ? "pointer-events:none;" : "" %>>Previous</a>
-        <% for( let i = 1; i < pagination.totalPage+1; i++ ) { %>
-        <a href="<%= helper.page(filters, i, queryParams) %>" class="<%= pagination.currentPage == i ? "active" : "" %> "><%= i %></a>
-        <% } %>
-        <a href="<%= helper.page(filters, pagination.currentPage + 1, queryParams) %>" style=<%= pagination.currentPage == pagination.totalPage ? "pointer-events:none;" : "" %>>Next</a>
-      </div>
-
-      <a href="/add">
-        <button class="button add">Add</button>
+<a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th><a href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=string&sortMode=${query.sortMode == 'asc' ? 'desc' : 'asc'}`) %>"><i class="fas fa-<%= query.sortBy == 'string' ? (query.sortMode == 'asc' ? 'sort-up' : 'sort-down') : 'sort' %>"></i> String</a></th>
+      <th><a href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=integer&sortMode=${query.sortMode == 'asc' ? 'desc' : 'asc'}`) %>"><i class="fas fa-<%= query.sortBy == 'integer' ? (query.sortMode == 'asc' ? 'sort-up' : 'sort-down') : 'sort' %>"></i> Integer</a></th>
+      <th><a href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=float&sortMode=${query.sortMode == 'asc' ? 'desc' : 'asc'}`) %>"><i class="fas fa-<%= query.sortBy == 'float' ? (query.sortMode == 'asc' ? 'sort-up' : 'sort-down') : 'sort' %>"></i> Float</a></th>
+      <th><a href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=date&sortMode=${query.sortMode == 'asc' ? 'desc' : 'asc'}`) %>"><i class="fas fa-<%= query.sortBy == 'date' ? (query.sortMode == 'asc' ? 'sort-up' : 'sort-down') : 'sort' %>"></i> Date</a></th>
+      <th><a href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=boolean&sortMode=${query.sortMode == 'asc' ? 'desc' : 'asc'}`) %>"><i class="fas fa-<%= query.sortBy == 'boolean' ? (query.sortMode == 'asc' ? 'sort-up' : 'sort-down') : 'sort' %>"></i> Boolean</a></th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% data.forEach((item, index) => { %>
+    <tr>
+      <td><%= item.id %></td>
+      <td><%= item.string %></td>
+      <td><%= item.integer %></td>
+      <td><%= item.float %></td>
+      <td><%= item.date ? moment(item.date).format('LL') : 'kosong' %></td>
+      <td><%= item.boolean %></td>
+      <td>
+        <a class="btn btn-success" href="/edit/<%= item.id %>"><i class="fas fa-edit"></i></a>
+        <a class="btn btn-danger" href="/delete/<%= item.id %>"><i class="fas fa-trash"></i></a>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li class="page-item<%=pagination.page == 1 ? ' disabled' : '' %>">
+      <a class="page-link" href="/?page=<%= pagination.page - 1 %>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
       </a>
+    </li>
 
-    </section>
-  </div>
-</body>
+    <% for( let i=1; i <=pagination.pages; i++ ) { %>
+    <li class="page-item<%=pagination.page==i ? ' active' : '' %>"><a class="page-link" href="<%= pagination.url.replace(`page=${pagination.page}`, `page=${i}`) %>">
+        <%= i %>
+      </a></li>
+    <% } %>
 
-</html>
+    <li class="page-item<%=pagination.page == pagination.pages ? ' disabled' : '' %>">
+      <a class="page-link" href="/?page=<%= pagination.page + 1 %>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<%- include('partials/footer') -%>
