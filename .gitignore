@@ -1,11 +1,7 @@
 node_modules
 
-.vscode
-*copy.js
-university.sql
 package-lock.json
+.vscode
 .db
 .sql
 .env
-pms/query.sql
-pms/public
