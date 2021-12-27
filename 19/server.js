@@ -1,142 +1,177 @@
-const express = require("express");
-const path = require("path");
-var bodyParser = require("body-parser");
-var helper = require("./helper");
+const fs = require('fs');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const moment = require('moment');
+moment.locale('id');
 
 const app = express();
 
 const port = 3000;
 
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use("/", express.static(path.join(__dirname, "public")));
+app.use('/', express.static(path.join(__dirname, 'public')));
 
-app.get("/", (req, res) => {
-  let data = helper.readFile();
-  let pagination = {
-    totalPage: 3,
-    currentPage: 1,
-    perPage: 3,
-    offset: 0,
-  };
-  let filters = [];
+app.get('/', (req, res) => {
+  const field = ['id', 'string', 'integer', 'float', 'date', 'boolean'];
 
-  if (req.query.string && req.query.stringCheck == "on") {
-    filters.push({ name: "string", value: req.query.string });
-  }
-  if (req.query.integer && req.query.integerCheck == "on") {
-    filters.push({ name: "integer", value: Number(req.query.integer) });
-  }
-  if (req.query.float && req.query.floatCheck == "on") {
-    filters.push({ name: "float", value: parseFloat(req.query.float) });
-  }
-  if (req.query.boolean && req.query.booleanCheck == "on") {
-    filters.push({
-      name: "boolean",
-      value: req.query.boolean == "true" ? true : false,
+  const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : 'id';
+  const sortMode = req.query.sortMode === 'desc' ? 'desc' : 'asc';
+
+  const url = req.url == '/' ? '/?page=1&sortBy=id&sortMode=asc' : req.url;
+  req.query.sortBy = sortBy;
+  req.query.sortMode = sortMode;
+
+  const { id, string, integer, float, startdate, enddate, boolean } = req.query;
+
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+
+  if (string) {
+    data = data.filter(item => {
+      return item.string.toLowerCase().includes(string.toLowerCase());
     });
   }
-  if (req.query.startdate && req.query.dateCheck == "on") {
-    filters.push({ name: "startdate", value: req.query.startdate });
-  }
-  if (req.query.enddate && req.query.dateCheck == "on") {
-    filters.push({ name: "enddate", value: req.query.enddate });
-  }
 
-  for (let i = 0; i < filters.length; i++) {
-    switch (filters[i].name) {
-      case "string":
-        data = data.filter((dataObj) => {
-          return dataObj.string == filters[i].value;
-        });
-        break;
-
-      case "integer":
-        data = data.filter((dataObj) => {
-          return dataObj.integer == filters[i].value;
-        });
-        break;
-
-      case "float":
-        data = data.filter((dataObj) => {
-          return dataObj.float == filters[i].value;
-        });
-        break;
-
-      case "boolean":
-        data = data.filter((dataObj) => {
-          return dataObj.boolean == filters[i].value;
-        });
-        break;
-
-      case "startdate":
-        data = data.filter((dataObj) => {
-          return (
-            dataObj.date >= filters[i].value &&
-            dataObj.date <= filters[i + 1].value
-          );
-        });
-        break;
-
-      default:
-        break;
-    }
+  if (integer) {
+    data = data.filter(item => {
+      return item.integer == Number(integer);
+    });
   }
 
-  pagination.totalPage = Math.ceil(data.length / pagination.perPage);
-  pagination.currentPage = Number(req.query.page ? req.query.page : 1);
-  pagination.offset = (pagination.currentPage - 1) * pagination.perPage;
+  if (float) {
+    data = data.filter(item => {
+      return item.float == Number(float);
+    });
+  }
 
-  let queryParams = req.url;
+  if (startdate && enddate) {
+    data = data.filter(item => {
+      return item.date > startdate && item.date < enddate;
+    });
+  } else if (startdate) {
+    data = data.filter(item => {
+      return item.date > startdate;
+    });
+  } else if (enddate) {
+    data = data.filter(item => {
+      return item.date < enddate;
+    });
+  }
 
-  res.render("index", { data, helper, pagination, queryParams, filters });
+  if (boolean) {
+    data = data.filter(item => {
+      return (item.boolean == boolean) === 'true' ? true : false;
+    });
+  }
+
+  const page = req.query.page || 1;
+  const limit = 3;
+  const offset = (page - 1) * limit;
+
+  const pages = Math.ceil(data.length / limit);
+
+  switch (sortMode) {
+    case 'desc':
+      if (sortBy == 'string' || sortBy == 'date') {
+        data.sort(function (a, b) {
+          let x = a[sortBy].toLowerCase();
+          let y = b[sortBy].toLowerCase();
+          if (x > y) {
+            return -1;
+          }
+          if (x < y) {
+            return 1;
+          }
+          return 0;
+        });
+      } else {
+        data.sort(function (a, b) {
+          return b[sortBy] - a[sortBy];
+        });
+      }
+      break;
+    case 'asc':
+      if (sortBy == 'string' || sortBy == 'date') {
+        data.sort(function (a, b) {
+          let x = a[sortBy].toLowerCase();
+          let y = b[sortBy].toLowerCase();
+          if (x < y) {
+            return -1;
+          }
+          if (x > y) {
+            return 1;
+          }
+          return 0;
+        });
+      } else {
+        data.sort(function (a, b) {
+          return a[sortBy] - b[sortBy];
+        });
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  data = data.slice(offset, offset + limit);
+  data.forEach((item, index) => {
+    item.id = offset + index + 1;
+  });
+
+  res.render('index', {
+    title: 'Browse',
+    data,
+    moment,
+    pagination: {
+      page: Number(page),
+      pages,
+      url,
+    },
+    query: req.query,
+  });
 });
 
-app.get("/add", (req, res) => res.render("add"));
+app.get('/add', (req, res) => res.render('add'));
 
-app.get("/edit/:id", (req, res) => {
-  let data = helper.readFile();
-  let obj = data[req.params.id];
-  obj.id = id;
-  res.render("edit", { obj });
+app.get('/edit/:id', (req, res) => {
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id];
+  data.id = Number(req.params.id) + 1;
+  res.render('edit', { data });
 });
 
-app.post("/add", (req, res) => {
+app.post('/add', (req, res) => {
   let data = helper.readFile();
   data.push({
     string: req.body.string,
     integer: parseInt(req.body.integer),
     float: parseFloat(req.body.float),
     date: req.body.date,
-    boolean: req.body.boolean == "true" ? true : false,
+    boolean: req.body.boolean === 'true' ? true : false,
   });
-  helper.writeFile(data);
-  res.redirect("/");
+  fs.writeFileSync('data.json', JSON.stringify(data));
+  res.redirect('/');
 });
 
-app.post("/edit/:id", (req, res) => {
-  let data = helper.readFile();
-  let id = req.params.id;
-  data[id].string = req.body.string;
-  data[id].integer = parseInt(req.body.integer);
-  data[id].float = parseFloat(req.body.float);
-  data[id].date = req.body.date;
-  data[id].boolean = req.body.boolean == "true" ? true : false;
-  helper.writeFile(data);
-  res.redirect("/");
+app.post('/edit/:id', (req, res) => {
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id];
+  data.string = req.body.string;
+  data.integer = Number(req.body.integer);
+  data.float = Number(req.body.float);
+  data.date = req.body.date;
+  data.boolean = req.body.boolean === 'true' ? true : false;
+  fs.writeFileSync('data.json', JSON.stringify(data));
+  res.redirect('/');
 });
 
-app.get("/delete/:id", (req, res) => {
-  let data = helper.readFile();
-  let id = req.params.id;
-  data.splice(id, 1);
-  helper.writeFile(data);
-  res.redirect("/");
+app.get('/delete/:id', (req, res) => {
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+  data.splice(req.params.id, 1);
+  fs.writeFileSync('data.json', JSON.stringify(data));
+  res.redirect('/');
 });
 
-app.listen(port, () =>
-  console.log(`Listening on port ${port}. Click: http://localhost:3000`)
-);
