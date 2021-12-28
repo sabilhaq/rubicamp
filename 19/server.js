@@ -19,52 +19,65 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   const field = ['id', 'string', 'integer', 'float', 'date', 'boolean'];
 
-  const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : 'id';
+  const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : 'createdat';
   const sortMode = req.query.sortMode === 'desc' ? 'desc' : 'asc';
 
   const url = req.url == '/' ? '/?page=1&sortBy=id&sortMode=asc' : req.url;
   req.query.sortBy = sortBy;
   req.query.sortMode = sortMode;
 
-  const { id, string, integer, float, startdate, enddate, boolean } = req.query;
+  const {
+    stringcheck,
+    integercheck,
+    floatcheck,
+    datecheck,
+    booleancheck,
+    id,
+    string,
+    integer,
+    float,
+    startdate,
+    enddate,
+    boolean,
+  } = req.query;
 
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
 
-  if (string) {
+  if (stringcheck && string) {
     data = data.filter(item => {
       return item.string.toLowerCase().includes(string.toLowerCase());
     });
   }
 
-  if (integer) {
+  if (integercheck && integer) {
     data = data.filter(item => {
       return item.integer == Number(integer);
     });
   }
 
-  if (float) {
+  if (floatcheck && float) {
     data = data.filter(item => {
       return item.float == Number(float);
     });
   }
 
-  if (startdate && enddate) {
+  if (datecheck && startdate && enddate) {
     data = data.filter(item => {
-      return item.date > startdate && item.date < enddate;
+      return item.date >= startdate && item.date <= enddate;
     });
-  } else if (startdate) {
+  } else if (datecheck && startdate) {
     data = data.filter(item => {
-      return item.date > startdate;
+      return item.date >= startdate;
     });
-  } else if (enddate) {
+  } else if (datecheck && enddate) {
     data = data.filter(item => {
-      return item.date < enddate;
+      return item.date <= enddate;
     });
   }
 
-  if (boolean) {
+  if (booleancheck && boolean) {
     data = data.filter(item => {
-      return (item.boolean == boolean) === 'true' ? true : false;
+      return item.boolean == (boolean === 'true' ? true : false);
     });
   }
 
@@ -119,37 +132,29 @@ app.get('/', (req, res) => {
   }
 
   data = data.slice(offset, offset + limit);
-  data.forEach((item, index) => {
-    item.id = offset + index + 1;
-  });
 
   res.render('index', {
-    title: 'Browse',
+    title: 'Breads',
     data,
     moment,
     pagination: {
       page: Number(page),
       pages,
+      offset,
       url,
     },
     query: req.query,
   });
 });
 
-app.get('/add', (req, res) => res.render('add'));
-
-app.get('/edit/:id', (req, res) => {
-  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id];
-  data.id = Number(req.params.id) + 1;
-  res.render('edit', { data });
-});
+app.get('/add', (req, res) => res.render('form', { title: 'Add Data', data: {} }));
 
 app.post('/add', (req, res) => {
-  let data = helper.readFile();
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
   data.push({
     string: req.body.string,
-    integer: parseInt(req.body.integer),
-    float: parseFloat(req.body.float),
+    integer: Number(req.body.integer),
+    float: Number(req.body.float),
     date: req.body.date,
     boolean: req.body.boolean === 'true' ? true : false,
   });
@@ -157,21 +162,28 @@ app.post('/add', (req, res) => {
   res.redirect('/');
 });
 
+app.get('/edit/:id', (req, res) => {
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id - 1];
+  data.id = Number(req.params.id);
+  res.render('form', { title: 'Edit Data', data, moment });
+});
+
 app.post('/edit/:id', (req, res) => {
-  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id];
-  data.string = req.body.string;
-  data.integer = Number(req.body.integer);
-  data.float = Number(req.body.float);
-  data.date = req.body.date;
-  data.boolean = req.body.boolean === 'true' ? true : false;
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+  data[req.params.id - 1].string = req.body.string;
+  data[req.params.id - 1].integer = Number(req.body.integer);
+  data[req.params.id - 1].float = Number(req.body.float);
+  data[req.params.id - 1].date = req.body.date;
+  data[req.params.id - 1].boolean = req.body.boolean === 'true' ? true : false;
   fs.writeFileSync('data.json', JSON.stringify(data));
   res.redirect('/');
 });
 
 app.get('/delete/:id', (req, res) => {
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
-  data.splice(req.params.id, 1);
+  data.splice(req.params.id - 1, 1);
   fs.writeFileSync('data.json', JSON.stringify(data));
   res.redirect('/');
 });
 
+app.listen(port, () => console.log(`Listening on port ${port}. Click: http://localhost:3000`));
