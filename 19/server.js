@@ -19,7 +19,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   const field = ['id', 'string', 'integer', 'float', 'date', 'boolean'];
 
-  const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : 'createdat';
+  const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : 'id';
   const sortMode = req.query.sortMode === 'desc' ? 'desc' : 'asc';
 
   const url = req.url == '/' ? '/?page=1&sortBy=id&sortMode=asc' : req.url;
@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
   req.query.sortMode = sortMode;
 
   const {
+    idcheck,
     stringcheck,
     integercheck,
     floatcheck,
@@ -42,6 +43,12 @@ app.get('/', (req, res) => {
   } = req.query;
 
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+
+  if (idcheck && id) {
+    data = data.filter(item => {
+      return item.id == Number(id);
+    });
+  }
 
   if (stringcheck && string) {
     data = data.filter(item => {
@@ -151,7 +158,9 @@ app.get('/add', (req, res) => res.render('form', { title: 'Add Data', data: {} }
 
 app.post('/add', (req, res) => {
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+  const maxId = Math.max.apply(Math, data.map(function (o) { return o.id; }))
   data.push({
+    id: maxId + 1,
     string: req.body.string,
     integer: Number(req.body.integer),
     float: Number(req.body.float),
@@ -163,25 +172,32 @@ app.post('/add', (req, res) => {
 });
 
 app.get('/edit/:id', (req, res) => {
-  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'))[req.params.id - 1];
-  data.id = Number(req.params.id);
+  let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
+  data = data.find(item => {
+    return item.id == req.params.id;
+  });
   res.render('form', { title: 'Edit Data', data, moment });
 });
 
 app.post('/edit/:id', (req, res) => {
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
-  data[req.params.id - 1].string = req.body.string;
-  data[req.params.id - 1].integer = Number(req.body.integer);
-  data[req.params.id - 1].float = Number(req.body.float);
-  data[req.params.id - 1].date = req.body.date;
-  data[req.params.id - 1].boolean = req.body.boolean === 'true' ? true : false;
+  index = data.findIndex(item => {
+    return item.id == req.params.id;
+  });
+  data[index].string = req.body.string;
+  data[index].integer = Number(req.body.integer);
+  data[index].float = Number(req.body.float);
+  data[index].date = req.body.date;
+  data[index].boolean = req.body.boolean === 'true' ? true : false;
   fs.writeFileSync('data.json', JSON.stringify(data));
   res.redirect('/');
 });
 
 app.get('/delete/:id', (req, res) => {
   let data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
-  data.splice(req.params.id - 1, 1);
+  data = data.filter(item => {
+    return item.id != req.params.id;
+  });
   fs.writeFileSync('data.json', JSON.stringify(data));
   res.redirect('/');
 });

@@ -12,6 +12,16 @@
     <div class="card-body">
       <div class="mb-3 row">
         <div class="col-sm-2 d-flex align-items-center">
+          <input class="form-check-input" type="checkbox" id="idcheck" name="idcheck" <%= query.idcheck && 'on' ? 'checked' : '' %>>
+          <label for="idcheck" class="col-form-label">ID</label>
+        </div>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="id" name="id" value="<%= query.id %>" placeholder="ID">
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <div class="col-sm-2 d-flex align-items-center">
           <input class="form-check-input" type="checkbox" id="stringcheck" name="stringcheck" <%= query.stringcheck && 'on' ? 'checked' : '' %>>
           <label for="stringcheck" class="col-form-label">String</label>
         </div>
@@ -86,7 +96,7 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>ID</th>
+      <th><a class="link-dark" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=id&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "id" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> ID</a></th>
       <th><a class="link-dark" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=string&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "string" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> String</a></th>
       <th><a class="link-dark" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=integer&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "integer" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Integer</a></th>
       <th><a class="link-dark" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=float&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "float" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Float</a></th>
@@ -96,17 +106,17 @@
     </tr>
   </thead>
   <tbody>
-    <% data.forEach((item, index) => { %>
+    <% data.forEach(item => { %>
     <tr>
-      <td><%= index + 1 + pagination.offset  %></td>
+      <td><%= item.id  %></td>
       <td><%= item.string %></td>
       <td><%= item.integer %></td>
       <td><%= item.float %></td>
       <td><%= item.date ? moment(item.date).format("LL") : "kosong" %></td>
       <td><%= item.boolean %></td>
       <td>
-        <a class="btn btn-success" href="/edit/<%= index + 1 + pagination.offset %>"><i class="fas fa-edit"></i></a>
-        <a class="btn btn-danger" href="/delete/<%= index + 1 + pagination.offset %>"><i class="fas fa-trash"></i></a>
+        <a class="btn btn-success" href="/edit/<%= item.id %>"><i class="fas fa-edit"></i></a>
+        <a class="btn btn-danger" href="/delete/<%= item.id %>"><i class="fas fa-trash"></i></a>
       </td>
     </tr>
     <% }) %>
