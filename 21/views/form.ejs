@@ -1,0 +1,50 @@
+<%- include('partials/header') -%>
+
+<h1><%= title %></h1>
+<form action='' method='post'>
+  <% if (title == 'Edit Data') { %>
+  <div class='mb-3 row'>
+    <label for='id' class='col-sm-2 col-form-label'>ID</label>
+    <div class='col-sm-10'>
+      <input type='text' class='form-control' id='id' name='id' value='<%= data.id %>' readonly>
+    </div>
+  </div>
+  <% } %>
+  <div class='mb-3 row'>
+    <label for='string' class='col-sm-2 col-form-label'>String</label>
+    <div class='col-sm-10'>
+      <input type='text' class='form-control' id='string' name='string' value='<%= data.string %>' placeholder='String'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='integer' class='col-sm-2 col-form-label'>Integer</label>
+    <div class='col-sm-10'>
+      <input type='number' class='form-control' id='integer' name='integer' value='<%= data.integer %>' placeholder='Integer'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='float' class='col-sm-2 col-form-label'>Float</label>
+    <div class='col-sm-10'>
+      <input type='number' step='any' class='form-control' id='float' name='float' value='<%= data.float %>' placeholder='Float'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='date' class='col-sm-2 col-form-label'>Date</label>
+    <div class='col-sm-10'>
+      <input type='date' class='form-control' id='date' name='date' value='<%= data.date ? moment(data.date).format('YYYY-MM-DD') : '' %>'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='boolean' class='col-sm-2 col-form-label'>Boolean</label>
+    <div class='col-sm-10'>
+      <select name='boolean' id='boolean' class='form-control'>
+        <option value='false' <%=data.boolean == false ? 'selected' : '' %>>False</option>
+        <option value='true' <%=data.boolean == true ? 'selected' : '' %>>True</option>
+      </select>
+    </div>
+  </div>
+  <button type='submit' class='btn btn-success'><%= title == 'Add Data' ? 'Save' : 'Update' %></button>
+  <a href='/' class='btn btn-warning'>Cancel</a>
+</form>
+
+<%- include('partials/footer') -%>
