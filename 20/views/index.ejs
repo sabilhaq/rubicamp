@@ -3,7 +3,7 @@
 <h1>BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
 <form action="" method="get">
   <input type="hidden" name="page" value="1" />
-  <input type="hidden" name="sortBy" value="createdat" />
+  <input type="hidden" name="sortBy" value="id" />
   <input type="hidden" name="sortMode" value="asc" />
   <div class="card mb-2">
     <div class="card-header">
@@ -72,7 +72,7 @@
 
       <div class="mb-3 row">
         <div class="col-sm-2 d-flex align-items-center">
-          <input class="form-check-input" type="checkbox" id="booleancheck" name="booleancheck" <%= query.booleancheck && 'on' ? 'checked' : '' %>>
+          <input class="form-check-input mt-0" type="checkbox" id="booleancheck" name="booleancheck" <%= query.booleancheck && 'on' ? 'checked' : '' %>>
           <label for="booleancheck" class="col-form-label">Boolean</label>
         </div>
 
