@@ -1,0 +1,51 @@
+<%- include('partials/header') -%>
+
+<h1><%= title %></h1>
+<form action='' method='post'>
+  <% if (title == 'Edit Data') { %>
+  <div class='mb-3 row'>
+    <label for='id' class='col-sm-2 col-form-label'>ID</label>
+    <div class='col-sm-10'>
+      <input type='text' class='form-control' id='id' name='id' value='<%= data.id %>' readonly>
+    </div>
+  </div>
+  <% } %>
+  <div class='mb-3 row'>
+    <label for='stringdata' class='col-sm-2 col-form-label'>String</label>
+    <div class='col-sm-10'>
+      <input type='text' class='form-control' id='stringdata' name='stringdata' value='<%= data.stringdata %>' placeholder='String'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='integerdata' class='col-sm-2 col-form-label'>Integer</label>
+    <div class='col-sm-10'>
+      <input type='number' class='form-control' id='integerdata' name='integerdata' value='<%= data.integerdata %>' placeholder='Integer'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='floatdata' class='col-sm-2 col-form-label'>Float</label>
+    <div class='col-sm-10'>
+      <input type='number' step='any' class='form-control' id='floatdata' name='floatdata' value='<%= data.floatdata %>' placeholder='Float'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='datedata' class='col-sm-2 col-form-label'>Date</label>
+    <div class='col-sm-10'>
+      <input type='date' class='form-control' id='datedata' name='datedata' value='<%= data.datedata ? moment(data.datedata).format('YYYY-MM-DD') : '' %>'>
+    </div>
+  </div>
+  <div class='mb-3 row'>
+    <label for='booleandata' class='col-sm-2 col-form-label'>Boolean</label>
+    <div class='col-sm-10'>
+      <select name='booleandata' id='booleandata' class='form-control'>
+        <option value='' disabled <%= title == 'Edit Data' ? 'hidden' : '' %>>Choose the boolean ...</option>
+        <option value='true' <%=data.booleandata == true ? 'selected' : '' %>>True</option>
+        <option value='false' <%=data.booleandata == false ? 'selected' : '' %>>False</option>
+      </select>
+    </div>
+  </div>
+  <button type='submit' class='btn btn-success'><%= title == 'Add Data' ? 'Save' : 'Update' %></button>
+  <a href='/' class='btn btn-warning'>Cancel</a>
+</form>
+
+<%- include('partials/footer') -%>
