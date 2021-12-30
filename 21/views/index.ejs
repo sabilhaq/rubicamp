@@ -75,89 +75,73 @@
           <input class="form-check-input mt-0" type="checkbox" id="booleancheck" name="booleancheck" <%= query.booleancheck && 'on' ? 'checked' : '' %>>
           <label for="booleancheck" class="col-form-label">Boolean</label>
         </div>
-</form>
-</section>
 
-<section class="table">
-  <table class="table">
-    <thead>
-      <tr>
-        <th onclick="location.href=`/?sort=id&order=<%= order %>`;">ID <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=string_type&order=<%= order %>`;">String <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=integer_type&order=<%= order %>`;">Integer <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=float_type&order=<%= order %>`;">Float <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=date_type&order=<%= order %>`;">Date <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=boolean_type&order=<%= order %>`;">Boolean <i class="fa fa-sort" style="font-size:12px;"></i></th>
-        <th onclick="location.href=`/?sort=actions_type&order=<%= order %>`;">Actions <i class="fa fa-sort" style="font-size:12px;"></i></th>
-      </tr>
-    </thead>
-
-    <div class="col-sm-10">
-      <select name="boolean" id="boolean" class="form-control">
-        <option value="">Choose the boolean ...</option>
-        <option value="false" <%=query.boolean == "false" ? "selected" : "" %>>False</option>
-        <option value="true" <%=query.boolean == "true" ? "selected" : "" %>>True</option>
-      </select>
-    </div>
-    </div>
+        <div class="col-sm-10">
+          <select name="boolean" id="boolean" class="form-control">
+            <option value="">Choose the boolean ...</option>
+            <option value="false" <%=query.boolean == "false" ? "selected" : "" %>>False</option>
+            <option value="true" <%=query.boolean == "true" ? "selected" : "" %>>True</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="card-footer">
       <button type="submit" class="btn btn-success"><i class="fas fa-search"></i> Search</button>
       <a href="/" class="btn btn-warning"><i class="fas fa-sync"></i> Reset</a>
     </div>
-    </div>
-    </form>
+  </div>
+</form>
 
-    <a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=id&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "id" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> ID</a></th>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=string&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "string" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> String</a></th>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=integer&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "integer" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Integer</a></th>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=float&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "float" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Float</a></th>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=date&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "date" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Date</a></th>
-          <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=boolean&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "boolean" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Boolean</a></th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% data.forEach(item => { %>
-        <tr>
-          <td><%= item.id  %></td>
-          <td><%= item.string %></td>
-          <td><%= item.integer %></td>
-          <td><%= item.float %></td>
-          <td><%= item.date ? moment(item.date).format("LL") : "kosong" %></td>
-          <td><%= item.boolean %></td>
-          <td>
-            <a class="btn btn-success" href="/edit/<%= item.id %>"><i class="fas fa-edit"></i></a>
-            <a class="btn btn-danger" href="/delete/<%= item.id %>"><i class="fas fa-trash"></i></a>
-          </td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
-    <nav aria-label="Page navigation">
-      <ul class="pagination">
-        <li class="page-item<%=pagination.page == 1 ? ' disabled' : '' %>">
-          <a class="page-link" href="/?page=<%= pagination.page - 1 %>" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
+<a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=id&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "id" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> ID</a></th>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=string&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "string" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> String</a></th>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=integer&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "integer" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Integer</a></th>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=float&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "float" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Float</a></th>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=date&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "date" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Date</a></th>
+      <th><a class="link-dark text-decoration-none" href="<%= pagination.url.replace(`sortBy=${query.sortBy}&sortMode=${query.sortMode}`, `sortBy=boolean&sortMode=${query.sortMode == "asc" ? "desc" : "asc"}`) %>"><i class="fas fa-<%= query.sortBy == "boolean" ? (query.sortMode == "asc" ? "sort-up" : "sort-down") : "sort" %>"></i> Boolean</a></th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% data.forEach(item => { %>
+    <tr>
+      <td><%= item.id  %></td>
+      <td><%= item.string %></td>
+      <td><%= item.integer %></td>
+      <td><%= item.float %></td>
+      <td><%= item.date ? moment(item.date).format("LL") : "kosong" %></td>
+      <td><%= item.boolean %></td>
+      <td>
+        <a class="btn btn-success" href="/edit/<%= item.id %>"><i class="fas fa-edit"></i></a>
+        <a class="btn btn-danger" href="/delete/<%= item.id %>"><i class="fas fa-trash"></i></a>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li class="page-item<%=pagination.page == 1 ? ' disabled' : '' %>">
+      <a class="page-link" href="/?page=<%= pagination.page - 1 %>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
 
-        <% for( let i=1; i <=pagination.pages; i++ ) { %>
-        <li class="page-item<%=pagination.page==i ? ' active' : '' %>"><a class="page-link" href="<%= pagination.url.replace(`page=${pagination.page}`, `page=${i}`) %>">
-            <%= i %>
-          </a></li>
-        <% } %>
+    <% for( let i=1; i <=pagination.pages; i++ ) { %>
+    <li class="page-item<%=pagination.page==i ? ' active' : '' %>"><a class="page-link" href="<%= pagination.url.replace(`page=${pagination.page}`, `page=${i}`) %>">
+        <%= i %>
+      </a></li>
+    <% } %>
 
-        <li class="page-item<%=pagination.page == pagination.pages ? ' disabled' : '' %>">
-          <a class="page-link" href="/?page=<%= pagination.page + 1 %>" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <li class="page-item<%=pagination.page == pagination.pages ? ' disabled' : '' %>">
+      <a class="page-link" href="/?page=<%= pagination.page + 1 %>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
-    <%- include('partials/footer') -%>
+<%- include('partials/footer') -%>
