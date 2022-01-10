@@ -1,191 +1,157 @@
-var expres = require("express");
+var expres = require('express');
+const { ObjectId } = require('mongodb');
 var router = expres.Router();
+const Response = require('../models/Response');
 
 module.exports = function (db) {
-  const collection = db.collection("data-type");
-  router.get("/", async function (req, res, next) {
+  const collection = db.collection('breads');
+  router.get('/', async function (req, res, next) {
     try {
-      // Variables
-      let order;
-      let data = {};
+      const field = ['_id', 'string', 'integer', 'float', 'date', 'boolean'];
+
+      const sortBy = field.includes(req.query.sortBy) ? req.query.sortBy : '_id';
+      const sortMode = req.query.sortMode === 'desc' ? -1 : 1;
+
+      req.query.sortBy = sortBy;
+      req.query.sortMode = sortMode === -1 ? 'desc' : 'asc';
+
+      const {
+        _idcheck,
+        stringcheck,
+        integercheck,
+        floatcheck,
+        datecheck,
+        booleancheck,
+        _id,
+        string,
+        integer,
+        float,
+        startdate,
+        enddate,
+        boolean,
+      } = req.query;
+
       let query = {};
-      let sort = {};
-      let pagination = {
-        totalData: 0,
-        totalPage: 3,
-        currentPage: 1,
-        perPage: 3,
-        offset: 0,
-      };
-      let filters = [];
 
-      // Filter
-      if (req.query._id) {
-        filters.push({ name: "_id", value: parseInt(req.query._id) });
-        query._id = parseInt(req.query._id);
+      if (_idcheck && _id) {
+        query[_id] = _id;
       }
-      if (req.query.string) {
-        filters.push({ name: "string", value: req.query.string });
-        query.string_type = req.query.string;
-      }
-      if (req.query.integer) {
-        filters.push({ name: "integer", value: Number(req.query.integer) });
-        query.integer_type = parseInt(req.query.integer);
-      }
-      if (req.query.float) {
-        filters.push({ name: "float", value: parseFloat(req.query.float) });
-        query.float_type = parseFloat(req.query.float);
-      }
-      if (req.query.boolean) {
-        filters.push({
-          name: "boolean",
-          value: req.query.boolean == "true" ? true : false,
-        });
-        query.boolean_type = req.query.boolean == "true" ? true : false;
-      }
-      if (req.query.startdate && req.query.enddate) {
-        filters.push({ name: "startdate", value: req.query.startdate });
-        filters.push({ name: "enddate", value: req.query.enddate });
 
-        query.date_type = {
-          $gte: new Date(req.query.startdate),
-          $lte: new Date(req.query.enddate),
+      if (stringcheck && string) {
+        query[string] = { $regex: string, $options: 'i' };
+      }
+
+      if (integercheck && integer) {
+        query[integer] = integer;
+      }
+
+      if (floatcheck && float) {
+        query[float] = float;
+      }
+
+      if (datecheck && startdate && enddate) {
+        query[date] = {
+          $gte: ISODate(startdate),
+          $lt: ISODate(enddate),
+        };
+      } else if (datecheck && startdate) {
+        query[date] = {
+          $gte: ISODate(startdate),
+        };
+      } else if (datecheck && enddate) {
+        query[date] = {
+          $lt: ISODate(enddate),
         };
       }
 
-      // Pagination
-      pagination.totalData = await collection.count(query);
-      pagination.totalPage = Math.ceil(
-        pagination.totalData / pagination.perPage
-      );
-      pagination.totalPage = pagination.totalPage ? pagination.totalPage : 1;
-      pagination.currentPage = Number(req.query.page ? req.query.page : 1);
-      pagination.offset = (pagination.currentPage - 1) * pagination.perPage;
-
-      // Sort
-      switch (req.query.order) {
-        case "asc":
-          order = 1;
-          break;
-        case "desc":
-          order = -1;
-          break;
-        default:
-          break;
-      }
-      if (order) {
-        switch (req.query.sort) {
-          case "_id":
-            sort._id = order;
-            break;
-          case "string_type":
-            sort.string_type = order;
-            break;
-          case "integer_type":
-            sort.integer_type = order;
-            break;
-          case "float_type":
-            sort.float_type = order;
-            break;
-          case "date_type":
-            sort.date_type = order;
-            break;
-          case "boolean_type":
-            sort.boolean_type = order;
-            break;
-          default:
-            break;
-        }
+      if (booleancheck && boolean) {
+        query[boolean] = boolean;
       }
 
-      const response = await collection
+      const page = req.query.page || 1;
+      const limit = 3;
+      const offset = (page - 1) * limit;
+
+      const totalResult = await collection.count(query);
+      const pages = Math.ceil(totalResult / limit);
+
+      const data = await collection
         .find(query)
-        .skip(pagination.offset)
-        .limit(pagination.perPage)
-        .sort(sort)
+        .skip(offset)
+        .limit(limit)
+        .sort({ [sortBy]: sortMode })
         .toArray();
-
-      data.items = response;
-      data.pagination = pagination;
-      data.filters = filters;
-      data.queryParams = req.url;
-      data.stringparam = req.url.slice(2);
-      data.order = req.query.order;
-      data.sort = req.query.sort;
-
-      res.json(data);
+      res.json(
+        new Response({
+          rows: data,
+          page: Number(page),
+          pages,
+        })
+      );
     } catch (err) {
-      res.status(500).json({ err });
+      console.log(err.stack);
+      res.json(new Response(null, 'something went wrong'));
     }
   });
 
-  router.post("/add", async function (req, res, next) {
+  router.post('/', async function (req, res, next) {
     try {
-      const lastId = await collection.count();
-      const obj = {
-        _id: lastId + 1,
-        string_type: req.body.string_type,
-        integer_type: parseInt(req.body.integer_type),
-        float_type: parseFloat(req.body.float_type),
-        date_type: (req.body.date_type && new Date(req.body.date_type)) || null,
-        boolean_type: req.body.boolean_type == "true" ? true : false,
-      };
-      const data = await collection.insertOne(obj);
-      const item = await collection.findOne({ _id: data.insertedId });
-      res.json(item);
-    } catch (err) {
-      res.status(500).json({ err });
-    }
-  });
-
-  router.get("/edit/:id", async function (req, res, next) {
-    try {
-      const item = await collection.findOne({
-        _id: parseInt(req.params.id),
+      const { string, integer, float, date, boolean } = req.body;
+      const data = await collection.insertOne({
+        string,
+        integer: Number(integer),
+        float: Number(float),
+        date: date ? new Date(date) : null,
+        boolean: boolean == 'true' ? true : false,
       });
-      item.date_type = item.date_type
-        ? item.date_type.toISOString().slice(0, 10)
-        : "";
-      res.json(item);
+      const item = await collection.findOne({ _id: data.insertedId });
+      res.json(new Response(item));
     } catch (err) {
-      res.status(500).json({ err });
+      console.log(err.stack);
+      res.json(new Response(null, 'something went wrong'));
     }
   });
 
-  router.put("/edit/:id", async function (req, res, next) {
+  router.get('/:id', async function (req, res, next) {
     try {
-      const data = await collection.updateOne(
-        { _id: parseInt(req.params.id) },
+      const data = await collection.findOne({ _id: ObjectId(req.params.id) });
+      res.json(new Response(data));
+    } catch (err) {
+      console.log(err.stack);
+      res.json(new Response(null, 'data not found'));
+    }
+  });
+
+  router.put('/:id', async function (req, res, next) {
+    try {
+      const { string, integer, float, date, boolean } = req.body;
+      const data = await collection.findOneAndUpdate(
+        { _id: ObjectId(req.params.id) },
         {
           $set: {
-            _id: parseInt(req.body._id),
-            string_type: req.body.string_type,
-            integer_type: parseInt(req.body.integer_type),
-            float_type: parseFloat(req.body.float_type),
-            date_type: new Date(req.body.date_type),
-            boolean_type: req.body.boolean_type == "true" ? true : false,
+            string,
+            integer: Number(integer),
+            float: Number(float),
+            date: date ? new Date(date) : null,
+            boolean: boolean == 'true' ? true : false,
           },
         },
-        { upsert: false }
+        { upsert: false, returnNewDocument: true }
       );
-      const item = await collection.findOne({
-        _id: parseInt(req.params.id),
-      });
-      res.json(item);
+      res.json(new Response(data.value));
     } catch (err) {
-      res.status(500).json({ err });
+      console.log(err.stack);
+      res.json(new Response(null, 'something went wrong'));
     }
   });
 
-  router.delete("/:id", async function (req, res, next) {
+  router.delete('/:id', async function (req, res, next) {
     try {
-      const item = await collection.findOne({
-        _id: parseInt(req.params.id),
-      });
-      const data = await collection.deleteOne({ _id: parseInt(req.params.id) });
-      res.json(item);
+      const data = await collection.findOneAndDelete({ _id: ObjectId(req.params.id) });
+      res.json(new Response(data.value));
     } catch (err) {
-      res.status(500).json({ err });
+      console.log(err.stack);
+      res.json(new Response(null, 'something went wrong'));
     }
   });
 
