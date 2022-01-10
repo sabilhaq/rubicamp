@@ -2,13 +2,14 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+require('dotenv').config()
 const { MongoClient } = require("mongodb");
 
 async function main() {
   const url = "mongodb://localhost:27017";
   const client = new MongoClient(url);
 
-  const dbName = "breaddb";
+  const dbName = process.env.DB_NAME;
 
   await client.connect();
   console.log("Connected successfully to server (http://localhost:3000)");
