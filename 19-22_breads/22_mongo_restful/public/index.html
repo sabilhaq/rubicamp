@@ -124,7 +124,6 @@
     </div>
   </form>
 
-  <!-- <a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a> -->
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
     data-bs-whatever="Form Add"><i class="fas fa-plus"></i> Add</button>
 
@@ -290,18 +289,10 @@
 
       var exampleModal = document.getElementById('exampleModal')
       exampleModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
         var button = event.relatedTarget
-        // Extract info from data-bs-* attributes
         var recipient = button.getAttribute('data-bs-whatever')
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
         var modalTitle = exampleModal.querySelector('.modal-title')
         var modalBodyInput = exampleModal.querySelector('.modal-body input')
-
-        // modalTitle.textContent = 'New message to ' + recipient
         modalTitle.textContent = recipient
         // modalBodyInput.value = recipient
       });
