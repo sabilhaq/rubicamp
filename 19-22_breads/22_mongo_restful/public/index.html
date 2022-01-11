@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JQuery Breads</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <style>
+    td {
+      line-height: 200%;
+    }
+
+    .table> :not(:last-child)> :last-child>* {
+      border-bottom-color: #e7e7e7;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="form-search" action="" method="get">
+    <div class="card mb-2">
+      <div class="card-header">
+        <h2>Filters</h2>
+      </div>
+      <div class="card-body">
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="idcheck" name="idcheck" />
+            <label for="idcheck" class="col-form-label">ID</label>
+          </div>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="id" name="id" value="" placeholder="ID" />
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="stringcheck" name="stringcheck" />
+            <label for="stringcheck" class="col-form-label">String</label>
+          </div>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="string" name="string" value="" placeholder="String" />
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="integercheck" name="integercheck" />
+            <label for="integercheck" class="col-form-label">Integer</label>
+          </div>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="integer" name="integer" value="" placeholder="Integer" />
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="floatcheck" name="floatcheck" />
+            <label for="floatcheck" class="col-form-label">Float</label>
+          </div>
+
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="float" name="float" value="" placeholder="Float" />
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="datecheck" name="datecheck" />
+            <label for="datecheck" class="col-form-label">Date</label>
+          </div>
+
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="startdate" name="startdate" value="" />
+              </div>
+              <span class="col-sm-2 d-flex justify-content-center align-items-center">to</span>
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="enddate" name="enddate" value="" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-2 d-flex align-items-center">
+            <input class="form-check-input mt-0" type="checkbox" id="booleancheck" name="booleancheck" />
+            <label for="booleancheck" class="col-form-label">Boolean</label>
+          </div>
+
+          <div class="col-sm-10">
+            <select name="boolean" id="boolean" class="form-control">
+              <option value="">Choose the boolean ...</option>
+              <option value="false">False</option>
+              <option value="true">True</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <button type="button" class="btn btn-warning btn-reset">
+          <i class="fas fa-sync"></i> Reset
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a>
+  <table id="table-users" class="table table-striped">
+    <thead>
+      <tr>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> ID</a></th>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> String</a></th>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Integer</a></th>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Float</a></th>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Date</a></th>
+        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Boolean</a></th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <nav aria-label="Page navigation">
+    <ul class="pagination"></ul>
+  </nav>
+
+  <script>
+    let params = {
+      page: 1,
+      idcheck: null,
+      stringcheck: null,
+      integercheck: null,
+      floatcheck: null,
+      datecheck: null,
+      booleancheck: null,
+      id: null,
+      string: null,
+      integer: null,
+      float: null,
+      startdate: null,
+      enddate: null,
+      boolean: null,
+      sortBy: 'id',
+      sortMode: 'asc',
+    };
+
+    $(document).ready(function () {
+      loadData();
+
+      $('ul.pagination').on('click', '.page-item a', function (e) {
+        e.preventDefault();
+        const page = $(this).attr('datapage');
+        params = {
+          ...params,
+          page,
+        };
+        loadData();
+      });
+
+      $('#form-search').submit(function (e) {
+        e.preventDefault();
+        $(this)
+          .serializeArray()
+          .forEach(item => {
+            params = {
+              ...params,
+              [item.name]: item.value,
+            };
+          });
+        loadData();
+      });
+
+      $('.btn-reset').click(function () {
+        params = {
+          page: 1,
+          name: null,
+          startBirthdate: null,
+          endBirthdate: null,
+          ismarried: null,
+          sortBy: 'id',
+          sortMode: 'asc',
+        }
+        $('#form-search').trigger('reset');
+        loadData();
+      })
+    });
+
+    // $(document).on('click', '#addpagebutton', function () {
+    //   loadAddForm();
+    // });
+
+    // $(document).on('click', '.btn-cancel', function (event) {
+    //   loadData();
+    // });
+
+    // $(document).on('click', '.btn-edit', function (event) {
+    //   const id = $(this).attr('iditem');
+    //   loadEditForm(id);
+    // });
+
+    // $(document).on('click', '.btn-delete', function () {
+    //   deleteData($(this).attr('iditem'));
+    // });
+
+    // $(document).on('click', '.sortthead', function (event) {
+    //   const sortString = $(this).attr('data-sort');
+    //   sortTable(sortString);
+    // });
+
+    // $(document).on('submit', '#form-add', function (event) {
+    //   event.preventDefault();
+    //   let string_type = $('#string_type').val();
+    //   let integer_type = $('#integer_type').val();
+    //   let float_type = $('#float_type').val();
+    //   let date_type = $('#date_type').val();
+    //   let boolean_type = $('#boolean_type').val();
+
+    //   const data = {
+    //     string_type,
+    //     integer_type,
+    //     float_type,
+    //     date_type,
+    //     boolean_type,
+    //   };
+
+    //   addData(data);
+    //   return false;
+    // });
+
+    // $(document).on('submit', '#form-edit', function (event) {
+    //   event.preventDefault();
+    //   let _id = $('#_id').val();
+    //   let string_type = $('#string_type').val();
+    //   let integer_type = $('#integer_type').val();
+    //   let float_type = $('#float_type').val();
+    //   let date_type = $('#date_type').val();
+    //   let boolean_type = $('#boolean_type').val();
+
+    //   const data = {
+    //     _id,
+    //     string_type,
+    //     integer_type,
+    //     float_type,
+    //     date_type,
+    //     boolean_type,
+    //   };
+
+    //   updateData(data);
+    //   return false;
+    // });
+
+    // const loadAddForm = () => {
+    //   let htmlAddForm = '';
+
+    //   htmlAddForm += `
+    //   <h1>Add Data</h1>
+
+    //   <form id="form-add" action="" method="post">
+    //     <div class="row mb-3 align-items-center justify-content-between">
+    //       <div class="col-auto">
+    //         <label class="form-check-label" for="string_type">String</label>
+    //       </div>
+    //       <div class="col-auto w-75">
+    //         <input type="text" id="string_type" name="string_type" class="form-control" placeholder="String">
+    //       </div>
+    //     </div>
+
+    //     <div class="row mb-3 align-items-center justify-content-between">
+    //       <div class="col-auto">
+    //         <label class="form-check-label" for="integer_type">Integer</label>
+    //       </div>
+    //       <div class="col-auto w-75">
+    //         <input type="number" id="integer_type" class="form-control" placeholder="Integer">
+    //       </div>
+    //     </div>
+
+    //     <div class="row mb-3 align-items-center justify-content-between">
+    //       <div class="col-auto">
+    //         <label class="form-check-label" for="float_type">Float</label>
+    //       </div>
+    //       <div class="col-auto w-75">
+    //         <input type="number" id="float_type" class="form-control" placeholder="Float" step="any">
+    //       </div>
+    //     </div>
+
+    //     <div class="row mb-3 align-items-center justify-content-between">
+    //       <div class="col-auto">
+    //         <label class="form-check-label" for="date_type">Date</label>
+    //       </div>
+    //       <div class="w-75">
+    //         <div class="col-auto w-25">
+    //           <input type="date" id="date_type" name="date_type" class="form-control" placeholder="Date" step="any">
+    //         </div>
+    //       </div>
+    //     </div>
+
+    //     <div class="row mb-3 align-items-center justify-content-between">
+    //       <div class="col-auto">
+    //         <label class="form-check-label" for="boolean_type">Boolean</label>
+    //       </div>
+    //       <div class="col-auto w-75">
+    //         <select id="boolean_type" name="boolean_type" class="form-select" aria-label="Default select example">
+    //           <option value="" disabled selected hidden>Choose the boolean ...</option>
+    //           <option value="true">True</option>
+    //           <option value="false">False</option>
+    //         </select>
+    //       </div>
+    //     </div>
+
+    //     <button class="btn btn-primary" type="submit">Save</button>
+    //     <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
+    //   </form>
+    //   `;
+
+    //   $('#pagecontainer').html(htmlAddForm);
+    // };
+
+    // const loadEditForm = id => {
+    //   let url = `http://localhost:3000/types/edit/${id}`;
+
+    //   $.ajax({
+    //     url,
+    //   }).done(function (item) {
+    //     const options = {
+    //       year: 'numeric',
+    //       month: 'long',
+    //       day: 'numeric',
+    //     };
+
+    //     let htmlEditForm = '';
+
+    //     htmlEditForm += `
+    //       <h1>Edit Data</h1>
+
+    //       <form id="form-edit" action="" method="post">
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="_id">ID</label>
+    //           </div>
+    //           <div class="col-auto w-75">
+    //             <input disabled type="text" id="_id" value="${item._id
+    //       }" class="form-control" placeholder="ID">
+    //           </div>
+    //         </div>
+
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="string_type">String</label>
+    //           </div>
+    //           <div class="col-auto w-75">
+    //             <input value="${item.string_type
+    //       }" type="text" id="string_type" name="string_type" class="form-control" placeholder="String">
+    //           </div>
+    //         </div>
+
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="integer_type">Integer</label>
+    //           </div>
+    //           <div class="col-auto w-75">
+    //             <input value="${item.integer_type
+    //       }" type="number" id="integer_type" class="form-control" placeholder="Integer">
+    //           </div>
+    //         </div>
+
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="float_type">Float</label>
+    //           </div>
+    //           <div class="col-auto w-75">
+    //             <input value="${item.float_type
+    //       }" type="number" id="float_type" class="form-control" placeholder="Float" step="any">
+    //           </div>
+    //         </div>
+
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="date_type">Date</label>
+    //           </div>
+    //           <div class="w-75">
+    //             <div class="col-auto w-25">
+    //               <input value="${item.date_type ? item.date_type : ''
+    //       }" type="date" id="date_type" name="date_type" class="form-control" placeholder="Date" step="any">
+    //             </div>
+    //           </div>
+    //         </div>
+
+    //         <div class="row mb-3 align-items-center justify-content-between">
+    //           <div class="col-auto">
+    //             <label class="form-check-label" for="boolean_type">Boolean</label>
+    //           </div>
+    //           <div class="col-auto w-75">
+    //             <select id="boolean_type" name="boolean_type" class="form-select" aria-label="Default select example">
+    //               <option value="" disabled selected hidden>Choose the boolean ...</option>
+    //               <option ${item.boolean_type && 'selected'} value="true">True</option>
+    //               <option ${!item.boolean_type && 'selected'} value="false">False</option>
+    //             </select>
+    //           </div>
+    //         </div>
+
+    //         <button class="btn btn-primary" type="submit">Update</button>
+    //         <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
+    //       </form>
+    //     `;
+
+    //     $('#pagecontainer').html(htmlEditForm);
+    //   });
+    // };
+
+    const loadData = param => {
+      $.ajax({
+        url: '/types',
+        method: 'GET',
+        data: params,
+        dataType: 'json',
+      }).done(response => {
+        let html = '';
+        console.log(response.data.rows);
+        response.data.rows.forEach(item => {
+          html += `
+          <tr>
+            <td>${item._id}</td>
+            <td>${item.string_type}</td>
+            <td>${item.integer_type}</td>
+            <td>${item.float_type}</td>
+            <td>${item.date_type ? item.date_type : 'kosong'}</td>
+            <td>${item.boolean_type}</td>
+            <td>
+              <button type="button" class="btn btn-success btn-edit" dataid="${item._id}"><i class="fas fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger btn-delete" dataid="${item._id}"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          `;
+        });
+        $('#table-users tbody').html(html);
+        pagination(response.data.page, response.data.pages);
+      }).fail(() => {
+        alert('terjadi kesalahan');
+      });;
+    };
+
+    const addData = data => {
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:3000/types/add',
+        data,
+      })
+        .done(function () {
+          loadData();
+        })
+        .fail(function (err) {
+          alert(err);
+        });
+    };
+
+    const updateData = data => {
+      $.ajax({
+        method: 'PUT',
+        url: `http://localhost:3000/types/edit/${data._id}`,
+        data,
+      })
+        .done(function () {
+          loadData();
+        })
+        .fail(function (err) {
+          alert(err);
+        });
+    };
+
+    const deleteData = id => {
+      $.ajax({
+        method: 'DELETE',
+        url: `http://localhost:3000/types/${id}`,
+      })
+        .done(function () {
+          loadData();
+        })
+        .fail(function (err) {
+          alert(err);
+        });
+    };
+
+    const pagination = (page, pages) => {
+      let html = `
+      <li class="page-item">
+        <a class="page-link" href="" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>`;
+
+      for (let i = 1; i <= pages; i++) {
+        html += `<li class="page-item${page == i ? ' active' : ''}"><a class="page-link" href="" datapage="${i}">${i}</a></li>`;
+      }
+
+      html += `
+      <li class="page-item">
+        <a class="page-link" href="" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>`;
+
+      $('ul.pagination').html(html);
+    };
+
+    // function sortTable(sortString) {
+    //   let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(',');
+    //   if (sortBy == oldSortBy) {
+    //     switch (sortOrder) {
+    //       case 'asc':
+    //         sortOrder = 'desc';
+    //         break;
+    //       case 'desc':
+    //         sortOrder = '';
+    //         break;
+    //       default:
+    //         sortOrder = 'asc';
+    //         break;
+    //     }
+    //   } else {
+    //     sortOrder = 'asc';
+    //   }
+
+    //   let filterParams = stringparam === 'undefined' ? '' : stringparam;
+    //   let filterArr = filterParams.split('&');
+    //   let filteredParam = filterArr.filter(filterElement => {
+    //     return (
+    //       !filterElement.startsWith('page') &&
+    //       !filterElement.startsWith('sort') &&
+    //       !filterElement.startsWith('order')
+    //     );
+    //   });
+    //   filterParams = filteredParam.join('&');
+    //   filterParams = filterParams ? '?' + filterParams : '';
+
+    //   let param = {
+    //     pageNext,
+    //     filter: filterParams,
+    //     sortBy,
+    //     sortOrder,
+    //   };
+    //   loadData(param);
+    // }
+  </script>
+</body>
+
+</html>
