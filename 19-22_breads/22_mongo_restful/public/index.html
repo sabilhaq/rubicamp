@@ -10,8 +10,14 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"
+    integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <style>
     td {
@@ -24,7 +30,8 @@
   </style>
 </head>
 
-<body>
+<body class="container my-4">
+  <h1>BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
   <form id="form-search" action="" method="get">
     <div class="card mb-2">
       <div class="card-header">
@@ -33,11 +40,11 @@
       <div class="card-body">
         <div class="mb-3 row">
           <div class="col-sm-2 d-flex align-items-center">
-            <input class="form-check-input mt-0" type="checkbox" id="idcheck" name="idcheck" />
-            <label for="idcheck" class="col-form-label">ID</label>
+            <input class="form-check-input mt-0" type="checkbox" id="_idcheck" name="_idcheck" />
+            <label for="_idcheck" class="col-form-label">ID</label>
           </div>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="id" name="id" value="" placeholder="ID" />
+            <input type="text" class="form-control" id="_id" name="_id" value="" placeholder="ID" />
           </div>
         </div>
 
@@ -117,16 +124,18 @@
     </div>
   </form>
 
-  <a class="btn btn-primary" href="/add"><i class="fas fa-plus"></i> Add</a>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal"
+    data-bs-whatever="Form Add"><i class="fas fa-plus"></i> Add</button>
+
   <table id="table-users" class="table table-striped">
     <thead>
       <tr>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> ID</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> String</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Integer</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Float</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Date</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Boolean</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="_id"><i class="fas fa-sort"></i> ID</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="string"><i class="fas fa-sort"></i> String</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="integer"><i class="fas fa-sort"></i> Integer</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="float"><i class="fas fa-sort"></i> Float</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="date"><i class="fas fa-sort"></i> Date</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="boolean"><i class="fas fa-sort"></i> Boolean</a></th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -136,32 +145,108 @@
     <ul class="pagination"></ul>
   </nav>
 
+  <!-- Modal Form -->
+  <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <form data-form="form-add" id="form-add" action="" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="formModalLabel">Form Add</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div id="modal-body-form" class="modal-body">
+            <div class="mb-3 row">
+              <label for="string" class="col-sm-2 col-form-label">String</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="modal-string" name="string" value="" placeholder="String">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="integer" class="col-sm-2 col-form-label">Integer</label>
+              <div class="col-sm-10">
+                <input type="number" class="form-control" id="modal-integer" name="integer" value=""
+                  placeholder="Integer">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="float" class="col-sm-2 col-form-label">Float</label>
+              <div class="col-sm-10">
+                <input type="number" step="any" class="form-control" id="modal-float" name="float" value=""
+                  placeholder="Float">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="date" class="col-sm-2 col-form-label">Date</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="modal-date" name="date" value="">
+              </div>
+            </div>
+            <div class="mb-3 row">
+              <label for="boolean" class="col-sm-2 col-form-label">Boolean</label>
+              <div class="col-sm-10">
+                <select name="boolean" id="modal-boolean" class="form-control">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="btn-modal-submit" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Delete -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="formModalLabel">Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="btn-modal-delete" type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    moment.locale("id");
+
     let params = {
       page: 1,
-      idcheck: null,
+      _idcheck: null,
       stringcheck: null,
       integercheck: null,
       floatcheck: null,
       datecheck: null,
       booleancheck: null,
-      id: null,
+      _id: null,
       string: null,
       integer: null,
       float: null,
       startdate: null,
       enddate: null,
       boolean: null,
-      sortBy: 'id',
-      sortMode: 'asc',
+      sortBy: "_id",
+      sortMode: "asc",
     };
 
     $(document).ready(function () {
       loadData();
 
-      $('ul.pagination').on('click', '.page-item a', function (e) {
+      $("ul.pagination").on("click", ".page-item a", function (e) {
         e.preventDefault();
-        const page = $(this).attr('datapage');
+        const page = $(this).attr("datapage");
         params = {
           ...params,
           page,
@@ -169,8 +254,33 @@
         loadData();
       });
 
-      $('#form-search').submit(function (e) {
+      $("table.table").on("click", "th a", function (e) {
         e.preventDefault();
+        const sortBy = $(this).attr("datasort");
+
+        if (params.sortBy != sortBy) {
+          params.sortMode = 'asc'
+        } else {
+          params.sortMode = params.sortMode == "asc" ? "desc" : "asc"
+        };
+        params = {
+          ...params,
+          sortBy,
+        };
+        loadData();
+      });
+
+      $("#form-search").submit(function (e) {
+        e.preventDefault();
+        params = {
+          ...params,
+          _idcheck: null,
+          stringcheck: null,
+          integercheck: null,
+          floatcheck: null,
+          datecheck: null,
+          booleancheck: null,
+        };
         $(this)
           .serializeArray()
           .forEach(item => {
@@ -182,376 +292,206 @@
         loadData();
       });
 
-      $('.btn-reset').click(function () {
+      $(".btn-reset").click(function () {
         params = {
           page: 1,
-          name: null,
-          startBirthdate: null,
-          endBirthdate: null,
-          ismarried: null,
-          sortBy: 'id',
-          sortMode: 'asc',
-        }
-        $('#form-search').trigger('reset');
+          _idcheck: null,
+          stringcheck: null,
+          integercheck: null,
+          floatcheck: null,
+          datecheck: null,
+          booleancheck: null,
+          _id: null,
+          string: null,
+          integer: null,
+          float: null,
+          startdate: null,
+          enddate: null,
+          boolean: null,
+          sortBy: "_id",
+          sortMode: "asc",
+        };
+        $("#form-search").trigger("reset");
         loadData();
-      })
+      });
+
+      var formModal = document.getElementById("formModal")
+      formModal.addEventListener("show.bs.modal", function (event) {
+        var button = event.relatedTarget
+        var recipient = button.getAttribute("data-bs-whatever")
+        var id = button.getAttribute("data-bs-id")
+        var modalTitle = formModal.querySelector(".modal-title")
+        modalTitle.textContent = recipient
+
+        if (recipient == "Form Edit") {
+          $("#form-add").attr('data-form', 'form-edit')
+          $('#btn-modal-submit').html('Update');
+          loadItem(id);
+        } else {
+          $("#form-add").attr('data-form', 'form-add')
+          $('#btn-modal-submit').html('Save');
+          $("#form-add").trigger("reset");
+        }
+      });
+
+      formModal.addEventListener("hidden.bs.modal", function (event) {
+        $("#modal-_id").parent().parent().remove();
+      });
+
+      var deleteModal = document.getElementById("deleteModal")
+      deleteModal.addEventListener("show.bs.modal", function (event) {
+        var button = event.relatedTarget
+        var id = button.getAttribute("data-bs-id")
+        $('#btn-modal-delete').attr('data-id', id)
+      });
+
+      $("#form-add").submit(function (e) {
+        e.preventDefault();
+        let data = {};
+        $(this)
+          .serializeArray()
+          .forEach(item => {
+            data = {
+              ...data,
+              [item.name]: item.value,
+            };
+          });
+        if ($(this).attr('data-form') == 'form-add') {
+          addData(data);
+        } else {
+          editData(data);
+        }
+      });
+
+      $("#btn-modal-delete").click(function () {
+        const id = $('#btn-modal-delete').attr('data-id');
+        deleteData(id);
+      });
     });
 
-    // $(document).on('click', '#addpagebutton', function () {
-    //   loadAddForm();
-    // });
-
-    // $(document).on('click', '.btn-cancel', function (event) {
-    //   loadData();
-    // });
-
-    // $(document).on('click', '.btn-edit', function (event) {
-    //   const id = $(this).attr('iditem');
-    //   loadEditForm(id);
-    // });
-
-    // $(document).on('click', '.btn-delete', function () {
-    //   deleteData($(this).attr('iditem'));
-    // });
-
-    // $(document).on('click', '.sortthead', function (event) {
-    //   const sortString = $(this).attr('data-sort');
-    //   sortTable(sortString);
-    // });
-
-    // $(document).on('submit', '#form-add', function (event) {
-    //   event.preventDefault();
-    //   let string_type = $('#string_type').val();
-    //   let integer_type = $('#integer_type').val();
-    //   let float_type = $('#float_type').val();
-    //   let date_type = $('#date_type').val();
-    //   let boolean_type = $('#boolean_type').val();
-
-    //   const data = {
-    //     string_type,
-    //     integer_type,
-    //     float_type,
-    //     date_type,
-    //     boolean_type,
-    //   };
-
-    //   addData(data);
-    //   return false;
-    // });
-
-    // $(document).on('submit', '#form-edit', function (event) {
-    //   event.preventDefault();
-    //   let _id = $('#_id').val();
-    //   let string_type = $('#string_type').val();
-    //   let integer_type = $('#integer_type').val();
-    //   let float_type = $('#float_type').val();
-    //   let date_type = $('#date_type').val();
-    //   let boolean_type = $('#boolean_type').val();
-
-    //   const data = {
-    //     _id,
-    //     string_type,
-    //     integer_type,
-    //     float_type,
-    //     date_type,
-    //     boolean_type,
-    //   };
-
-    //   updateData(data);
-    //   return false;
-    // });
-
-    // const loadAddForm = () => {
-    //   let htmlAddForm = '';
-
-    //   htmlAddForm += `
-    //   <h1>Add Data</h1>
-
-    //   <form id="form-add" action="" method="post">
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="string_type">String</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="text" id="string_type" name="string_type" class="form-control" placeholder="String">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="integer_type">Integer</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="number" id="integer_type" class="form-control" placeholder="Integer">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="float_type">Float</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="number" id="float_type" class="form-control" placeholder="Float" step="any">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="date_type">Date</label>
-    //       </div>
-    //       <div class="w-75">
-    //         <div class="col-auto w-25">
-    //           <input type="date" id="date_type" name="date_type" class="form-control" placeholder="Date" step="any">
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="boolean_type">Boolean</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <select id="boolean_type" name="boolean_type" class="form-select" aria-label="Default select example">
-    //           <option value="" disabled selected hidden>Choose the boolean ...</option>
-    //           <option value="true">True</option>
-    //           <option value="false">False</option>
-    //         </select>
-    //       </div>
-    //     </div>
-
-    //     <button class="btn btn-primary" type="submit">Save</button>
-    //     <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
-    //   </form>
-    //   `;
-
-    //   $('#pagecontainer').html(htmlAddForm);
-    // };
-
-    // const loadEditForm = id => {
-    //   let url = `http://localhost:3000/types/edit/${id}`;
-
-    //   $.ajax({
-    //     url,
-    //   }).done(function (item) {
-    //     const options = {
-    //       year: 'numeric',
-    //       month: 'long',
-    //       day: 'numeric',
-    //     };
-
-    //     let htmlEditForm = '';
-
-    //     htmlEditForm += `
-    //       <h1>Edit Data</h1>
-
-    //       <form id="form-edit" action="" method="post">
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="_id">ID</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input disabled type="text" id="_id" value="${item._id
-    //       }" class="form-control" placeholder="ID">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="string_type">String</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.string_type
-    //       }" type="text" id="string_type" name="string_type" class="form-control" placeholder="String">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="integer_type">Integer</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.integer_type
-    //       }" type="number" id="integer_type" class="form-control" placeholder="Integer">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="float_type">Float</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.float_type
-    //       }" type="number" id="float_type" class="form-control" placeholder="Float" step="any">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="date_type">Date</label>
-    //           </div>
-    //           <div class="w-75">
-    //             <div class="col-auto w-25">
-    //               <input value="${item.date_type ? item.date_type : ''
-    //       }" type="date" id="date_type" name="date_type" class="form-control" placeholder="Date" step="any">
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="boolean_type">Boolean</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <select id="boolean_type" name="boolean_type" class="form-select" aria-label="Default select example">
-    //               <option value="" disabled selected hidden>Choose the boolean ...</option>
-    //               <option ${item.boolean_type && 'selected'} value="true">True</option>
-    //               <option ${!item.boolean_type && 'selected'} value="false">False</option>
-    //             </select>
-    //           </div>
-    //         </div>
-
-    //         <button class="btn btn-primary" type="submit">Update</button>
-    //         <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
-    //       </form>
-    //     `;
-
-    //     $('#pagecontainer').html(htmlEditForm);
-    //   });
-    // };
-
-    const loadData = param => {
+    const loadData = () => {
       $.ajax({
-        url: '/types',
-        method: 'GET',
+        url: "/types",
+        method: "GET",
         data: params,
-        dataType: 'json',
+        dataType: "json",
       }).done(response => {
-        let html = '';
-        console.log(response.data.rows);
-        response.data.rows.forEach(item => {
+        let html = "";
+        response.data.rows.forEach((item, index) => {
           html += `
           <tr>
-            <td>${item._id}</td>
-            <td>${item.string_type}</td>
-            <td>${item.integer_type}</td>
-            <td>${item.float_type}</td>
-            <td>${item.date_type ? item.date_type : 'kosong'}</td>
-            <td>${item.boolean_type}</td>
+            <td>${(response.data.page - 1) * 3 + index + 1}</td>
+            <td>${item.string}</td>
+            <td>${item.integer}</td>
+            <td>${item.float}</td>
+            <td>${item.date ? moment(item.date).format("LL") : "kosong"}</td>
+            <td>${item.boolean}</td>
             <td>
-              <button type="button" class="btn btn-success btn-edit" dataid="${item._id}"><i class="fas fa-pencil"></i></button>
-              <button type="button" class="btn btn-danger btn-delete" dataid="${item._id}"><i class="fas fa-trash"></i></button>
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="${item._id}" data-bs-whatever="Form Edit"><i class="fas fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-id="${item._id}"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
           `;
         });
-        $('#table-users tbody').html(html);
+        $("#table-users tbody").html(html);
         pagination(response.data.page, response.data.pages);
+        sort();
       }).fail(() => {
-        alert('terjadi kesalahan');
+        alert("terjadi kesalahan");
+      });;
+    };
+
+    const loadItem = id => {
+      $.ajax({
+        url: `/types/${id}`,
+        method: "GET",
+        dataType: "json",
+      }).done(response => {
+        let htmlId = `
+          <div class="mb-3 row">
+            <label for="id" class="col-sm-2 col-form-label">ID</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="modal-_id" name="_id" value="${response.data._id}" readonly>
+            </div>
+          </div>
+        `
+        $('#modal-body-form').prepend(htmlId);
+        $("#modal-_id").val(response.data._id);
+        $("#modal-string").val(response.data.string);
+        $("#modal-integer").val(response.data.integer);
+        $("#modal-float").val(response.data.float);
+        $("#modal-date").val(moment(response.data.date).format('YYYY-MM-DD'));
+        $("#modal-boolean").val([response.data.boolean]);
+      }).fail(() => {
+        alert("terjadi kesalahan");
       });;
     };
 
     const addData = data => {
       $.ajax({
-        method: 'POST',
-        url: 'http://localhost:3000/types/add',
+        url: "/types",
+        method: "POST",
         data,
-      })
-        .done(function () {
-          loadData();
-        })
-        .fail(function (err) {
-          alert(err);
-        });
+      }).done(response => {
+        $("#form-add")[0].reset();
+        loadData();
+      }).fail(() => {
+        alert("terjadi kesalahan");
+      });;
     };
 
-    const updateData = data => {
+    const editData = data => {
       $.ajax({
-        method: 'PUT',
-        url: `http://localhost:3000/types/edit/${data._id}`,
+        url: `/types/${data._id}`,
+        method: "PUT",
         data,
-      })
-        .done(function () {
-          loadData();
-        })
-        .fail(function (err) {
-          alert(err);
-        });
+      }).done(response => {
+        loadData();
+      }).fail(() => {
+        alert("terjadi kesalahan");
+      });
     };
 
     const deleteData = id => {
       $.ajax({
-        method: 'DELETE',
-        url: `http://localhost:3000/types/${id}`,
-      })
-        .done(function () {
-          loadData();
-        })
-        .fail(function (err) {
-          alert(err);
-        });
+        url: `/types/${id}`,
+        method: "DELETE",
+      }).done(response => {
+        loadData();
+      }).fail(() => {
+        alert("terjadi kesalahan");
+      });
     };
 
     const pagination = (page, pages) => {
       let html = `
-      <li class="page-item">
-        <a class="page-link" href="" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
+      <li class="page-item${page == 1 ? ' disabled' : ''}">
+        <a class="page-link" href="" datapage="${page - 1}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>`;
 
       for (let i = 1; i <= pages; i++) {
-        html += `<li class="page-item${page == i ? ' active' : ''}"><a class="page-link" href="" datapage="${i}">${i}</a></li>`;
+        html += `<li class="page-item${page == i ? " active" : ""}"><a class="page-link" href="" datapage="${i}">${i}</a></li>`;
       }
 
       html += `
-      <li class="page-item">
-        <a class="page-link" href="" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
+      <li class="page-item${page == pages ? ' disabled' : ''}">
+        <a class="page-link" href="" datapage="${page + 1}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>`;
 
-      $('ul.pagination').html(html);
+      $("ul.pagination").html(html);
     };
 
-    // function sortTable(sortString) {
-    //   let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(',');
-    //   if (sortBy == oldSortBy) {
-    //     switch (sortOrder) {
-    //       case 'asc':
-    //         sortOrder = 'desc';
-    //         break;
-    //       case 'desc':
-    //         sortOrder = '';
-    //         break;
-    //       default:
-    //         sortOrder = 'asc';
-    //         break;
-    //     }
-    //   } else {
-    //     sortOrder = 'asc';
-    //   }
-
-    //   let filterParams = stringparam === 'undefined' ? '' : stringparam;
-    //   let filterArr = filterParams.split('&');
-    //   let filteredParam = filterArr.filter(filterElement => {
-    //     return (
-    //       !filterElement.startsWith('page') &&
-    //       !filterElement.startsWith('sort') &&
-    //       !filterElement.startsWith('order')
-    //     );
-    //   });
-    //   filterParams = filteredParam.join('&');
-    //   filterParams = filterParams ? '?' + filterParams : '';
-
-    //   let param = {
-    //     pageNext,
-    //     filter: filterParams,
-    //     sortBy,
-    //     sortOrder,
-    //   };
-    //   loadData(param);
-    // }
+    const sort = () => {
+      $('th a i.fas').each(function (i, obj) {
+        if ($(this).parent().attr('datasort') == params.sortBy && params.sortMode == 'asc') {
+          $(this).attr('class', `fas fa-sort-up`);
+        } else if ($(this).parent().attr('datasort') == params.sortBy && params.sortMode == 'desc') {
+          $(this).attr('class', 'fas fa-sort-down');
+        } else {
+          $(this).attr('class', 'fas fa-sort');
+        }
+      });
+    }
   </script>
 </body>
 

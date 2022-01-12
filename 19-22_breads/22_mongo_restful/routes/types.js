@@ -34,38 +34,38 @@ module.exports = function (db) {
       let query = {};
 
       if (_idcheck && _id) {
-        query[_id] = _id;
+        query._id = ObjectId(_id);
       }
 
       if (stringcheck && string) {
-        query[string] = { $regex: string, $options: 'i' };
+        query.string = { $regex: string, $options: 'i' };
       }
 
       if (integercheck && integer) {
-        query[integer] = integer;
+        query.integer = Number(integer);
       }
 
       if (floatcheck && float) {
-        query[float] = float;
+        query.float = Number(float);
       }
 
       if (datecheck && startdate && enddate) {
-        query[date] = {
-          $gte: ISODate(startdate),
-          $lt: ISODate(enddate),
+        query.date = {
+          $gte: new Date(startdate),
+          $lt: new Date(enddate),
         };
       } else if (datecheck && startdate) {
-        query[date] = {
-          $gte: ISODate(startdate),
+        query.date = {
+          $gte: new Date(startdate),
         };
       } else if (datecheck && enddate) {
-        query[date] = {
-          $lt: ISODate(enddate),
+        query.date = {
+          $lt: new Date(enddate),
         };
       }
 
       if (booleancheck && boolean) {
-        query[boolean] = boolean;
+        query.boolean = boolean == 'true' ? true : false;
       }
 
       const page = req.query.page || 1;
@@ -77,6 +77,7 @@ module.exports = function (db) {
 
       const data = await collection
         .find(query)
+        .collation({locale: "en" })
         .skip(offset)
         .limit(limit)
         .sort({ [sortBy]: sortMode })
