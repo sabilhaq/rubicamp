@@ -77,6 +77,7 @@ module.exports = function (db) {
 
       const data = await collection
         .find(query)
+        .collation({locale: "en" })
         .skip(offset)
         .limit(limit)
         .sort({ [sortBy]: sortMode })

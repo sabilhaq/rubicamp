@@ -130,12 +130,12 @@
   <table id="table-users" class="table table-striped">
     <thead>
       <tr>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> ID</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> String</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Integer</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Float</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Date</a></th>
-        <th><a class="link-dark text-decoration-none" href=""><i class="fas fa-sort"></i> Boolean</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="_id"><i class="fas fa-sort"></i> ID</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="string"><i class="fas fa-sort"></i> String</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="integer"><i class="fas fa-sort"></i> Integer</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="float"><i class="fas fa-sort"></i> Float</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="date"><i class="fas fa-sort"></i> Date</a></th>
+        <th><a class="link-dark text-decoration-none" href="" datasort="boolean"><i class="fas fa-sort"></i> Boolean</a></th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -149,7 +149,6 @@
   <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
-
         <form data-form="form-add" id="form-add" action="" method="post">
           <div class="modal-header">
             <h5 class="modal-title" id="formModalLabel">Form Add</h5>
@@ -255,8 +254,33 @@
         loadData();
       });
 
+      $("table.table").on("click", "th a", function (e) {
+        e.preventDefault();
+        const sortBy = $(this).attr("datasort");
+
+        if (params.sortBy != sortBy) {
+          params.sortMode = 'asc'
+        } else {
+          params.sortMode = params.sortMode == "asc" ? "desc" : "asc"
+        };
+        params = {
+          ...params,
+          sortBy,
+        };
+        loadData();
+      });
+
       $("#form-search").submit(function (e) {
         e.preventDefault();
+        params = {
+          ...params,
+          _idcheck: null,
+          stringcheck: null,
+          integercheck: null,
+          floatcheck: null,
+          datecheck: null,
+          booleancheck: null,
+        };
         $(this)
           .serializeArray()
           .forEach(item => {
@@ -286,7 +310,7 @@
           boolean: null,
           sortBy: "_id",
           sortMode: "asc",
-        }
+        };
         $("#form-search").trigger("reset");
         loadData();
       });
@@ -332,7 +356,6 @@
               [item.name]: item.value,
             };
           });
-        console.log(data);
         if ($(this).attr('data-form') == 'form-add') {
           addData(data);
         } else {
@@ -346,12 +369,7 @@
       });
     });
 
-    // $(document).on("click", ".sortthead", function (event) {
-    //   const sortString = $(this).attr("data-sort");
-    //   sortTable(sortString);
-    // });
-
-    const loadData = param => {
+    const loadData = () => {
       $.ajax({
         url: "/types",
         method: "GET",
@@ -359,7 +377,6 @@
         dataType: "json",
       }).done(response => {
         let html = "";
-        console.log(response.data);
         response.data.rows.forEach((item, index) => {
           html += `
           <tr>
@@ -378,6 +395,7 @@
         });
         $("#table-users tbody").html(html);
         pagination(response.data.page, response.data.pages);
+        sort();
       }).fail(() => {
         alert("terjadi kesalahan");
       });;
@@ -389,7 +407,6 @@
         method: "GET",
         dataType: "json",
       }).done(response => {
-        console.log(response.data._id, typeof response.data._id);
         let htmlId = `
           <div class="mb-3 row">
             <label for="id" class="col-sm-2 col-form-label">ID</label>
@@ -416,7 +433,6 @@
         method: "POST",
         data,
       }).done(response => {
-        console.log(response.data);
         $("#form-add")[0].reset();
         loadData();
       }).fail(() => {
@@ -430,7 +446,6 @@
         method: "PUT",
         data,
       }).done(response => {
-        console.log(response);
         loadData();
       }).fail(() => {
         alert("terjadi kesalahan");
@@ -442,7 +457,6 @@
         url: `/types/${id}`,
         method: "DELETE",
       }).done(response => {
-        console.log(response);
         loadData();
       }).fail(() => {
         alert("terjadi kesalahan");
@@ -451,10 +465,8 @@
 
     const pagination = (page, pages) => {
       let html = `
-      <li class="page-item">
-        <a class="page-link" href="" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
+      <li class="page-item${page == 1 ? ' disabled' : ''}">
+        <a class="page-link" href="" datapage="${page - 1}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
       </li>`;
 
       for (let i = 1; i <= pages; i++) {
@@ -462,53 +474,24 @@
       }
 
       html += `
-      <li class="page-item">
-        <a class="page-link" href="" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
+      <li class="page-item${page == pages ? ' disabled' : ''}">
+        <a class="page-link" href="" datapage="${page + 1}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
       </li>`;
 
       $("ul.pagination").html(html);
     };
 
-    // function sortTable(sortString) {
-    //   let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(",");
-    //   if (sortBy == oldSortBy) {
-    //     switch (sortOrder) {
-    //       case "asc":
-    //         sortOrder = "desc";
-    //         break;
-    //       case "desc":
-    //         sortOrder = "";
-    //         break;
-    //       default:
-    //         sortOrder = "asc";
-    //         break;
-    //     }
-    //   } else {
-    //     sortOrder = "asc";
-    //   }
-
-    //   let filterParams = stringparam === "undefined" ? "" : stringparam;
-    //   let filterArr = filterParams.split("&");
-    //   let filteredParam = filterArr.filter(filterElement => {
-    //     return (
-    //       !filterElement.startsWith("page") &&
-    //       !filterElement.startsWith("sort") &&
-    //       !filterElement.startsWith("order")
-    //     );
-    //   });
-    //   filterParams = filteredParam.join("&");
-    //   filterParams = filterParams ? "?" + filterParams : "";
-
-    //   let param = {
-    //     pageNext,
-    //     filter: filterParams,
-    //     sortBy,
-    //     sortOrder,
-    //   };
-    //   loadData(param);
-    // }
+    const sort = () => {
+      $('th a i.fas').each(function (i, obj) {
+        if ($(this).parent().attr('datasort') == params.sortBy && params.sortMode == 'asc') {
+          $(this).attr('class', `fas fa-sort-up`);
+        } else if ($(this).parent().attr('datasort') == params.sortBy && params.sortMode == 'desc') {
+          $(this).attr('class', 'fas fa-sort-down');
+        } else {
+          $(this).attr('class', 'fas fa-sort');
+        }
+      });
+    }
   </script>
 </body>
 
