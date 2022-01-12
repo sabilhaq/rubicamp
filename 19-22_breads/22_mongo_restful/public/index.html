@@ -124,7 +124,7 @@
     </div>
   </form>
 
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal"
     data-bs-whatever="Form Add"><i class="fas fa-plus"></i> Add</button>
 
   <table id="table-users" class="table table-striped">
@@ -145,79 +145,83 @@
     <ul class="pagination"></ul>
   </nav>
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <!-- Modal Form -->
+  <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
 
-        <form id="form-add" action='' method='post'>
+        <form data-form="form-add" id="form-add" action="" method="post">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Form Add</h5>
+            <h5 class="modal-title" id="formModalLabel">Form Add</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
-            <!-- <form action='' method='post'> -->
-            <!-- <% if (title=='Edit Data' ) { %>
-              <div class='mb-3 row'>
-                <label for='id' class='col-sm-2 col-form-label'>ID</label>
-                <div class='col-sm-10'>
-                  <input type='text' class='form-control' id='id' name='id' value='<%= data.id %>' readonly>
-                </div>
-              </div>
-              <% } %> -->
-            <div class='mb-3 row'>
-              <label for='string' class='col-sm-2 col-form-label'>String</label>
-              <div class='col-sm-10'>
-                <input type='text' class='form-control' id='string' name='string' value='' placeholder='String'>
+          <div id="modal-body-form" class="modal-body">
+            <div class="mb-3 row">
+              <label for="string" class="col-sm-2 col-form-label">String</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="modal-string" name="string" value="" placeholder="String">
               </div>
             </div>
-            <div class='mb-3 row'>
-              <label for='integer' class='col-sm-2 col-form-label'>Integer</label>
-              <div class='col-sm-10'>
-                <input type='number' class='form-control' id='integer' name='integer' value='' placeholder='Integer'>
+            <div class="mb-3 row">
+              <label for="integer" class="col-sm-2 col-form-label">Integer</label>
+              <div class="col-sm-10">
+                <input type="number" class="form-control" id="modal-integer" name="integer" value=""
+                  placeholder="Integer">
               </div>
             </div>
-            <div class='mb-3 row'>
-              <label for='float' class='col-sm-2 col-form-label'>Float</label>
-              <div class='col-sm-10'>
-                <input type='number' step='any' class='form-control' id='float' name='float' value=''
-                  placeholder='Float'>
+            <div class="mb-3 row">
+              <label for="float" class="col-sm-2 col-form-label">Float</label>
+              <div class="col-sm-10">
+                <input type="number" step="any" class="form-control" id="modal-float" name="float" value=""
+                  placeholder="Float">
               </div>
             </div>
-            <div class='mb-3 row'>
-              <label for='date' class='col-sm-2 col-form-label'>Date</label>
-              <div class='col-sm-10'>
-                <input type='date' class='form-control' id='date' name='date' value=''>
+            <div class="mb-3 row">
+              <label for="date" class="col-sm-2 col-form-label">Date</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="modal-date" name="date" value="">
               </div>
             </div>
-            <div class='mb-3 row'>
-              <label for='boolean' class='col-sm-2 col-form-label'>Boolean</label>
-              <div class='col-sm-10'>
-                <select name='boolean' id='boolean' class='form-control'>
-                  <option value='false'>False</option>
-                  <option value='true'>True</option>
+            <div class="mb-3 row">
+              <label for="boolean" class="col-sm-2 col-form-label">Boolean</label>
+              <div class="col-sm-10">
+                <select name="boolean" id="modal-boolean" class="form-control">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
                 </select>
               </div>
             </div>
-            <!-- <button type='submit' class='btn btn-success'> Save</button> -->
-            <!-- <button type='submit' class='btn btn-success'>
-              <%= title=='Add Data' ? 'Save' : 'Update' %>
-            </button> -->
-            <!-- <a href='/' class='btn btn-warning'>Cancel</a> -->
-            <!-- </form> -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+            <button id="btn-modal-submit" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
 
+  <!-- Modal Delete -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="formModalLabel">Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="btn-modal-delete" type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    moment.locale('id');
+    moment.locale("id");
 
     let params = {
       page: 1,
@@ -234,16 +238,16 @@
       startdate: null,
       enddate: null,
       boolean: null,
-      sortBy: '_id',
-      sortMode: 'asc',
+      sortBy: "_id",
+      sortMode: "asc",
     };
 
     $(document).ready(function () {
       loadData();
 
-      $('ul.pagination').on('click', '.page-item a', function (e) {
+      $("ul.pagination").on("click", ".page-item a", function (e) {
         e.preventDefault();
-        const page = $(this).attr('datapage');
+        const page = $(this).attr("datapage");
         params = {
           ...params,
           page,
@@ -251,7 +255,7 @@
         loadData();
       });
 
-      $('#form-search').submit(function (e) {
+      $("#form-search").submit(function (e) {
         e.preventDefault();
         $(this)
           .serializeArray()
@@ -264,7 +268,7 @@
         loadData();
       });
 
-      $('.btn-reset').click(function () {
+      $(".btn-reset").click(function () {
         params = {
           page: 1,
           _idcheck: null,
@@ -280,24 +284,44 @@
           startdate: null,
           enddate: null,
           boolean: null,
-          sortBy: '_id',
-          sortMode: 'asc',
+          sortBy: "_id",
+          sortMode: "asc",
         }
-        $('#form-search').trigger('reset');
+        $("#form-search").trigger("reset");
         loadData();
       });
 
-      var exampleModal = document.getElementById('exampleModal')
-      exampleModal.addEventListener('show.bs.modal', function (event) {
+      var formModal = document.getElementById("formModal")
+      formModal.addEventListener("show.bs.modal", function (event) {
         var button = event.relatedTarget
-        var recipient = button.getAttribute('data-bs-whatever')
-        var modalTitle = exampleModal.querySelector('.modal-title')
-        var modalBodyInput = exampleModal.querySelector('.modal-body input')
+        var recipient = button.getAttribute("data-bs-whatever")
+        var id = button.getAttribute("data-bs-id")
+        var modalTitle = formModal.querySelector(".modal-title")
         modalTitle.textContent = recipient
-        // modalBodyInput.value = recipient
+
+        if (recipient == "Form Edit") {
+          $("#form-add").attr('data-form', 'form-edit')
+          $('#btn-modal-submit').html('Update');
+          loadItem(id);
+        } else {
+          $("#form-add").attr('data-form', 'form-add')
+          $('#btn-modal-submit').html('Save');
+          $("#form-add").trigger("reset");
+        }
       });
 
-      $('#form-add').submit(function (e) {
+      formModal.addEventListener("hidden.bs.modal", function (event) {
+        $("#modal-_id").parent().parent().remove();
+      });
+
+      var deleteModal = document.getElementById("deleteModal")
+      deleteModal.addEventListener("show.bs.modal", function (event) {
+        var button = event.relatedTarget
+        var id = button.getAttribute("data-bs-id")
+        $('#btn-modal-delete').attr('data-id', id)
+      });
+
+      $("#form-add").submit(function (e) {
         e.preventDefault();
         let data = {};
         $(this)
@@ -309,235 +333,32 @@
             };
           });
         console.log(data);
-        addData(data);
+        if ($(this).attr('data-form') == 'form-add') {
+          addData(data);
+        } else {
+          editData(data);
+        }
+      });
+
+      $("#btn-modal-delete").click(function () {
+        const id = $('#btn-modal-delete').attr('data-id');
+        deleteData(id);
       });
     });
 
-    // $(document).on('click', '#addpagebutton', function () {
-    //   loadAddForm();
-    // });
-
-    // $(document).on('click', '.btn-cancel', function (event) {
-    //   loadData();
-    // });
-
-    // $(document).on('click', '.btn-edit', function (event) {
-    //   const id = $(this).attr('iditem');
-    //   loadEditForm(id);
-    // });
-
-    // $(document).on('click', '.btn-delete', function () {
-    //   deleteData($(this).attr('iditem'));
-    // });
-
-    // $(document).on('click', '.sortthead', function (event) {
-    //   const sortString = $(this).attr('data-sort');
+    // $(document).on("click", ".sortthead", function (event) {
+    //   const sortString = $(this).attr("data-sort");
     //   sortTable(sortString);
     // });
 
-    // $(document).on('submit', '#form-add', function (event) {
-    //   event.preventDefault();
-    //   let string = $('#string').val();
-    //   let integer = $('#integer').val();
-    //   let float = $('#float').val();
-    //   let date = $('#date').val();
-    //   let boolean = $('#boolean').val();
-
-    //   const data = {
-    //     string,
-    //     integer,
-    //     float,
-    //     date,
-    //     boolean,
-    //   };
-
-    //   addData(data);
-    //   return false;
-    // });
-
-    // $(document).on('submit', '#form-edit', function (event) {
-    //   event.preventDefault();
-    //   let _id = $('#_id').val();
-    //   let string = $('#string').val();
-    //   let integer = $('#integer').val();
-    //   let float = $('#float').val();
-    //   let date = $('#date').val();
-    //   let boolean = $('#boolean').val();
-
-    //   const data = {
-    //     _id,
-    //     string,
-    //     integer,
-    //     float,
-    //     date,
-    //     boolean,
-    //   };
-
-    //   updateData(data);
-    //   return false;
-    // });
-
-    // const loadAddForm = () => {
-    //   let htmlAddForm = '';
-
-    //   htmlAddForm += `
-    //   <h1>Add Data</h1>
-
-    //   <form id="form-add" action="" method="post">
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="string">String</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="text" id="string" name="string" class="form-control" placeholder="String">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="integer">Integer</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="number" id="integer" class="form-control" placeholder="Integer">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="float">Float</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <input type="number" id="float" class="form-control" placeholder="Float" step="any">
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="date">Date</label>
-    //       </div>
-    //       <div class="w-75">
-    //         <div class="col-auto w-25">
-    //           <input type="date" id="date" name="date" class="form-control" placeholder="Date" step="any">
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     <div class="row mb-3 align-items-center justify-content-between">
-    //       <div class="col-auto">
-    //         <label class="form-check-label" for="boolean">Boolean</label>
-    //       </div>
-    //       <div class="col-auto w-75">
-    //         <select id="boolean" name="boolean" class="form-select" aria-label="Default select example">
-    //           <option value="" disabled selected hidden>Choose the boolean ...</option>
-    //           <option value="true">True</option>
-    //           <option value="false">False</option>
-    //         </select>
-    //       </div>
-    //     </div>
-
-    //     <button class="btn btn-primary" type="submit">Save</button>
-    //     <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
-    //   </form>
-    //   `;
-
-    //   $('#pagecontainer').html(htmlAddForm);
-    // };
-
-    // const loadEditForm = id => {
-    //   let url = `http://localhost:3000/types/edit/${id}`;
-
-    //   $.ajax({
-    //     url,
-    //   }).done(function (item) {
-    //     const options = {
-    //       year: 'numeric',
-    //       month: 'long',
-    //       day: 'numeric',
-    //     };
-
-    //     let htmlEditForm = '';
-
-    //     htmlEditForm += `
-    //       <h1>Edit Data</h1>
-
-    //       <form id="form-edit" action="" method="post">
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="_id">ID</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input disabled type="text" id="_id" value="${item._id}" class="form-control" placeholder="ID">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="string">String</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.string }" type="text" id="string" name="string" class="form-control" placeholder="String">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="integer">Integer</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.integer}" type="number" id="integer" class="form-control" placeholder="Integer">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="float">Float</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <input value="${item.float}" type="number" id="float" class="form-control" placeholder="Float" step="any">
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="date">Date</label>
-    //           </div>
-    //           <div class="w-75">
-    //             <div class="col-auto w-25">
-    //               <input value="${item.date ? item.date : ''}" type="date" id="date" name="date" class="form-control" placeholder="Date" step="any">
-    //             </div>
-    //           </div>
-    //         </div>
-
-    //         <div class="row mb-3 align-items-center justify-content-between">
-    //           <div class="col-auto">
-    //             <label class="form-check-label" for="boolean">Boolean</label>
-    //           </div>
-    //           <div class="col-auto w-75">
-    //             <select id="boolean" name="boolean" class="form-select" aria-label="Default select example">
-    //               <option value="" disabled selected hidden>Choose the boolean ...</option>
-    //               <option ${item.boolean && 'selected'} value="true">True</option>
-    //               <option ${!item.boolean && 'selected'} value="false">False</option>
-    //             </select>
-    //           </div>
-    //         </div>
-
-    //         <button class="btn btn-primary" type="submit">Update</button>
-    //         <a class="btn btn-outline-secondary btn-cancel">Cancel</a>
-    //       </form>
-    //     `;
-
-    //     $('#pagecontainer').html(htmlEditForm);
-    //   });
-    // };
-
     const loadData = param => {
       $.ajax({
-        url: '/types',
-        method: 'GET',
+        url: "/types",
+        method: "GET",
         data: params,
-        dataType: 'json',
+        dataType: "json",
       }).done(response => {
-        let html = '';
+        let html = "";
         console.log(response.data);
         response.data.rows.forEach((item, index) => {
           html += `
@@ -546,61 +367,86 @@
             <td>${item.string}</td>
             <td>${item.integer}</td>
             <td>${item.float}</td>
-            <td>${item.date ? moment(item.date).format("LL") : 'kosong'}</td>
+            <td>${item.date ? moment(item.date).format("LL") : "kosong"}</td>
             <td>${item.boolean}</td>
             <td>
-              <button type="button" class="btn btn-success btn-edit" dataid="${item._id}"><i class="fas fa-pencil"></i></button>
-              <button type="button" class="btn btn-danger btn-delete" dataid="${item._id}"><i class="fas fa-trash"></i></button>
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="${item._id}" data-bs-whatever="Form Edit"><i class="fas fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-id="${item._id}"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
           `;
         });
-        $('#table-users tbody').html(html);
+        $("#table-users tbody").html(html);
         pagination(response.data.page, response.data.pages);
       }).fail(() => {
-        alert('terjadi kesalahan');
+        alert("terjadi kesalahan");
+      });;
+    };
+
+    const loadItem = id => {
+      $.ajax({
+        url: `/types/${id}`,
+        method: "GET",
+        dataType: "json",
+      }).done(response => {
+        console.log(response.data._id, typeof response.data._id);
+        let htmlId = `
+          <div class="mb-3 row">
+            <label for="id" class="col-sm-2 col-form-label">ID</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="modal-_id" name="_id" value="${response.data._id}" readonly>
+            </div>
+          </div>
+        `
+        $('#modal-body-form').prepend(htmlId);
+        $("#modal-_id").val(response.data._id);
+        $("#modal-string").val(response.data.string);
+        $("#modal-integer").val(response.data.integer);
+        $("#modal-float").val(response.data.float);
+        $("#modal-date").val(moment(response.data.date).format('YYYY-MM-DD'));
+        $("#modal-boolean").val([response.data.boolean]);
+      }).fail(() => {
+        alert("terjadi kesalahan");
       });;
     };
 
     const addData = data => {
       $.ajax({
-        url: '/types',
-        method: 'POST',
+        url: "/types",
+        method: "POST",
         data,
       }).done(response => {
         console.log(response.data);
-        $('#form-add')[0].reset();
+        $("#form-add")[0].reset();
         loadData();
       }).fail(() => {
-        alert('terjadi kesalahan');
+        alert("terjadi kesalahan");
       });;
     };
 
-    const updateData = data => {
+    const editData = data => {
       $.ajax({
-        method: 'PUT',
-        url: `http://localhost:3000/types/edit/${data._id}`,
+        url: `/types/${data._id}`,
+        method: "PUT",
         data,
-      })
-        .done(function () {
-          loadData();
-        })
-        .fail(function (err) {
-          alert(err);
-        });
+      }).done(response => {
+        console.log(response);
+        loadData();
+      }).fail(() => {
+        alert("terjadi kesalahan");
+      });
     };
 
     const deleteData = id => {
       $.ajax({
-        method: 'DELETE',
-        url: `http://localhost:3000/types/${id}`,
-      })
-        .done(function () {
-          loadData();
-        })
-        .fail(function (err) {
-          alert(err);
-        });
+        url: `/types/${id}`,
+        method: "DELETE",
+      }).done(response => {
+        console.log(response);
+        loadData();
+      }).fail(() => {
+        alert("terjadi kesalahan");
+      });
     };
 
     const pagination = (page, pages) => {
@@ -612,7 +458,7 @@
       </li>`;
 
       for (let i = 1; i <= pages; i++) {
-        html += `<li class="page-item${page == i ? ' active' : ''}"><a class="page-link" href="" datapage="${i}">${i}</a></li>`;
+        html += `<li class="page-item${page == i ? " active" : ""}"><a class="page-link" href="" datapage="${i}">${i}</a></li>`;
       }
 
       html += `
@@ -622,38 +468,38 @@
         </a>
       </li>`;
 
-      $('ul.pagination').html(html);
+      $("ul.pagination").html(html);
     };
 
     // function sortTable(sortString) {
-    //   let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(',');
+    //   let [sortBy, oldSortBy, sortOrder, stringparam, pageNext] = sortString.split(",");
     //   if (sortBy == oldSortBy) {
     //     switch (sortOrder) {
-    //       case 'asc':
-    //         sortOrder = 'desc';
+    //       case "asc":
+    //         sortOrder = "desc";
     //         break;
-    //       case 'desc':
-    //         sortOrder = '';
+    //       case "desc":
+    //         sortOrder = "";
     //         break;
     //       default:
-    //         sortOrder = 'asc';
+    //         sortOrder = "asc";
     //         break;
     //     }
     //   } else {
-    //     sortOrder = 'asc';
+    //     sortOrder = "asc";
     //   }
 
-    //   let filterParams = stringparam === 'undefined' ? '' : stringparam;
-    //   let filterArr = filterParams.split('&');
+    //   let filterParams = stringparam === "undefined" ? "" : stringparam;
+    //   let filterArr = filterParams.split("&");
     //   let filteredParam = filterArr.filter(filterElement => {
     //     return (
-    //       !filterElement.startsWith('page') &&
-    //       !filterElement.startsWith('sort') &&
-    //       !filterElement.startsWith('order')
+    //       !filterElement.startsWith("page") &&
+    //       !filterElement.startsWith("sort") &&
+    //       !filterElement.startsWith("order")
     //     );
     //   });
-    //   filterParams = filteredParam.join('&');
-    //   filterParams = filterParams ? '?' + filterParams : '';
+    //   filterParams = filteredParam.join("&");
+    //   filterParams = filterParams ? "?" + filterParams : "";
 
     //   let param = {
     //     pageNext,
